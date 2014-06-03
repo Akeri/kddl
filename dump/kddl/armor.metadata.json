@@ -1,0 +1,1 @@
+{ "options" : { "create" : "armor" }, "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "kddl.armor", "name" : "_id_" }, { "v" : 1, "key" : { "name" : 1 }, "unique" : true, "ns" : "kddl.armor", "name" : "name_1", "sparse" : true }, { "v" : 1, "key" : { "id" : 1 }, "unique" : true, "ns" : "kddl.armor", "name" : "id_1", "sparse" : true } ] }

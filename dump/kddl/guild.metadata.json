@@ -1,0 +1,1 @@
+{ "options" : { "create" : "guild" }, "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "kddl.guild", "name" : "_id_" }, { "v" : 1, "key" : { "id" : 1 }, "unique" : true, "ns" : "kddl.guild", "name" : "id_1", "sparse" : true }, { "v" : 1, "key" : { "name" : 1 }, "unique" : true, "ns" : "kddl.guild", "name" : "name_1", "sparse" : true } ] }

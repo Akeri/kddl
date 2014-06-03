@@ -1,0 +1,1 @@
+{ "options" : { "create" : "player" }, "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "kddl.player", "name" : "_id_" }, { "v" : 1, "key" : { "id" : 1 }, "unique" : true, "ns" : "kddl.player", "name" : "id_1", "sparse" : true } ] }
