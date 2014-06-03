@@ -1,0 +1,172 @@
+table a, .table a {
+  text-decoration:none;
+}
+#main {
+  background-color:#e9eaed;
+}
+#top-nav {
+	border-width:0;
+	outline:solid 4px rgba(0,0,0,.15);
+}
+#top-nav .navbar-brand {
+}
+.box {
+	background-color:#445569;
+}
+#top-nav li>a:hover,
+#top-nav li>a:focus,
+#top-nav .open,
+#top-nav .open>a,
+#top-nav .open>a:hover,
+#top-nav .open>a:focus {
+  background-color:rgba(0,0,0,.08);
+}
+#top-nav li > a,.navbar-toggle  {
+}
+#top-nav .dropdown-menu li a {
+  color:#2A4888;
+}
+#sidebar {
+	border-top:solid 3px #354354;
+}
+#sidebar,
+#sidebar a,
+.sidebar-footer a {
+  color:#F2CA85;
+  background-color:transparent;
+  text-shadow:1px 0 1px #1E2630;
+  padding-left:10px;
+}
+#sidebar #lg-menu .glyphicon {
+	color:#54D1F1;
+}
+#sidebar .nav li>a:hover {
+  background-color:#3A4C60;
+}
+#sidebar-footer {
+  color:#ffffff;
+}
+.navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+.breadcrumb {
+	box-shadow:0 4px 0 rgba(0, 0, 0, 0.15);
+	border-bottom-width:0;
+}
+.progress-bar {
+	line-height:15px;
+}
+.bootstrap-select .dropdown-menu {
+  max-width: 200px;
+}
+.bootstrap-select .dropdown-menu span.text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bootstrap-select.btn-group .dropdown-toggle {
+}
+.bootstrap-select.btn-group .dropdown-menu li > a {
+  color:#555555;
+}
+.bootstrap-select.btn-group .dropdown-menu li:not(.disabled) > a:hover small, .bootstrap-select.btn-group .dropdown-menu li:not(.disabled) > a:focus small, .bootstrap-select.btn-group .dropdown-menu li.active:not(.disabled) > a small {
+  color:#999999 !important;
+}
+.bootstrap-select.btn-group .dropdown-menu > .active > a,
+.bootstrap-select.btn-group .dropdown-menu > .active > a:hover,
+.bootstrap-select.btn-group .dropdown-menu > .active > a:focus {
+  color:#FFFFFF;
+}
+.bootstrap-select-searchbox + ul.dropdown-menu.selectpicker {
+  margin-top: 8px !important;
+}
+.bg-default {
+	background-color: #F5F5F5;
+  border-color: rgba(0, 0, 0, 0);
+  color: #333333;
+}
+.tab-content .tab-pane > .panel {
+  border-top:none;
+  border-top-left-radius:0;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  border-top-right-radius:0;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+}
+.nav.nav-tabs {
+  -moz-border-radius-topleft:3px;
+  -webkit-border-top-left-radius:3px;
+  border-top-right-radius:3px;
+  -moz-border-radius-topright:3px;
+  -webkit-border-top-right-radius:3px;
+  border-bottom:solid 1px #e7e7e7;
+  border-right:solid 1px #e7e7e7;
+  padding:5px 5px 0;
+}
+.nav.nav-tabs > li:not(.active) > a:not(:hover) {
+	background-color:rgba(0,0,0,.05);
+}
+.nav.nav-tabs > li.active > a {
+	font-weight:bold;
+}
+
+.player-armor-card {
+	position:relative;
+  width:140px;
+  height:140px;
+  display:inline-block;
+  margin:2px 2px 12px;
+}
+.player-armor-card .label-plus {
+	position:absolute;
+	right:4px;
+	top:4px;
+}
+.player-armor-card .panel {
+  margin:0;
+}
+.player-armor-card .player-armor-card-name {
+  width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  height:30px;
+  line-height:15px;
+}
+.player-armor-card img {
+  width:auto;
+  height:80px;
+}
+.player-armor-card .panel-body {
+  padding:5px;
+}
+.player-armor-card .progress {
+  position:relative;
+  margin:3px 0 0;
+}
+.player-armor-card .progress-bar {
+  overflow:hidden;
+  min-width:20%;
+}
+.player-armor-card .progress span {
+  display:block;
+  width:100%;
+  white-space:nowrap;
+}
+@media screen and (max-width: 768px){
+	.player-armor-card {
+	  width:80px;
+	  height:80px;
+	}
+	.player-armor-card .label-plus {
+	  position:absolute;
+	  right:2px;
+	  top:2px;
+	}
+	.player-armor-card img {
+	  height:50px;
+	}
+	.player-armor-card-name {
+	  display:none;
+	}
+}

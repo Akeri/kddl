@@ -1,0 +1,237 @@
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+
+<style>
+  .row > div {
+    padding-left:0;
+  }
+  .row > div:last-child {
+    padding-right:0;
+  }
+  @media screen and (max-width: 768px) {
+    .row > div {
+      padding-right:0;
+    }
+  }
+  .panel-collapsable .panel-heading a {
+    text-decoration:none;
+    cursor:pointer;
+  }
+  .panel-collapsable .panel-heading h4:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";    
+    float:right; 
+    color:grey;
+  }
+  .panel-collapsable .panel-heading a.collapsed h4:after {
+    content:"\e080";
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/user/profile/<%- user.id %>"><%= user.nickname %></a></li>
+  <li class="active">Edit profile</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div class="row">
+
+  <div class="col-sm-8 col-xs-12">
+  
+    <form role="form" method="POST" action="/user/profile/<%- user.id %>/update">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	        <h4 style="display:inline-block">
+	          <span style="text-shadow:1px -1px 1px #ffffff;">Update your profile</span>
+	        </h4>
+	<!--        <span class="label label-default pull-right"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span> -->
+	      </div>
+	      <div class="panel-body">
+	        <div class="form-group">
+            <label for="user-email">Email address</label>
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+              <input name="email" type="email" class="form-control" id="user-email" placeholder="Enter email" value="<%= user.email  %>" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="user-nickname">Nickname</label>
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+              <input name="nickname" type="text" class="form-control" id="user-nickname" placeholder="Usual nick" value="<%= user.nickname %>" />
+            </div>
+          </div>
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-edit"></span> Send
+          </button>
+        </div>
+      </div>
+    </form>
+    
+    <form role="form" method="POST" action="/user/profile/<%- user.id %>/update">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>
+            Set your location
+            <% if (!user.country || !user.timezone){ %>
+              <span class="glyphicon glyphicon-exclamation-sign" data-maketooltip data-toggle="tooltip" data-placement="right" title="Please fill this panel" style="cursor:pointer;"></span>
+            <% } %>
+          </h4>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="user-country-name">Country</label>
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+              <input name="countryName" type="text" class="form-control" id="user-country-name" placeholder="Type your country" autocomplete="off"
+                <% if (user.country){ %> value="<%- user.country.name %>" <% } %>
+              />
+              <input name="countryCCA2" type="hidden" id="user-country-cca2" <% if (user.country){ %> value="<%- user.country.cca2 %>" <% } %> />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="user-timezone">Timezone</label>
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+              <select name="timezone" class="form-control" id="user-timezone" data-live-search="true" autocomplete="off" data-value="<%- user.timezone ? user.timezone : null %>">
+                <option value="null" selected>Select your timezone...</option>
+              </select>
+            </div>
+          </div>
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-edit"></span> Send
+          </button>
+        </div>
+      </div>
+    </form>
+     
+	    <div id="user-players" class="panel panel-default">
+	     <div class="panel-heading">
+	       <h4>Your players</h4>
+	     </div>
+	     <div class="panel-body">
+	       <% if (user.players.length){ %>
+	         <ul class="list-group" style="margin-top:10px;">
+	           <% _.each(user.players, function(player){ %>
+	              <li class="list-group-item vcenter" style="overflow:hidden;">
+	                <span style="display:inline-block;vertical-align:middle;">
+	                  <a title="Show" href="/user/<%- user.id %>/player/show/<%- player.id %>"><%= player.name %></a>
+	                  <% if (player.main === true){ %>
+	                    <span class="label label-default" style="display:inline-block;margin-left:5px;">main</span>
+	                  <% } %>
+                  </span>
+	                <div class="btn-group btn-group-sm pull-right">
+		                <a title="Edit" href="/user/<%- user.id %>/player/edit/<%- player.id %>" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i></a>
+		                <a title="Delete" href="#" class="btn-player-delete btn btn-default"
+		                  data-player_id="<%- player.id %>" data-player_name="<%= player.name %>" data-user_id="<%- user.id %>"
+		                  data-toggle="modal" data-target="#player-delete-confirm"><i class="glyphicon glyphicon-trash"></i></a>
+		              </div>
+	                <div class="btn-group btn-group-sm pull-right" style="margin-right:-1px;">
+		                <% if (player.main === true){ %>
+		                  <span title="Current main" class="btn-main-player-switch btn btn-default active"><span class="glyphicon glyphicon-star"></span></span>
+			              <% }else{ %>
+			                <form role="form" method="POST" action="/user/<%- user.id %>/player/<%- player.id %>/turnmain/#user-players">
+			                  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+			                  <button type="submit" title="Turn into main" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-star-empty"></span></button>
+			                </form>
+			              <% } %>
+	                </div>
+                </li>
+	           <% }) %>
+	         </ul>
+	       <% } else { %>
+	         <p>No players at this time, probably you should add one</p>
+	       <% } %>
+	       <a href="/user/<%- user.id %>/player/new" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add player</a>
+	     </div>
+	   </div>
+     
+     <form role="form" method="POST" action="/user/<%- user.id %>/password/update">
+       <div class="panel panel-default panel-collapsable">
+         <div class="panel-heading">
+           <a data-toggle="collapse" data-target="#user-password-panel-body">
+             <h4>Change your password</h4>
+           </a>
+         </div>
+         <div id="user-password-panel-body" class="panel-collapse collapse">
+	         <div class="panel-body">
+	           <div class="form-group">
+	             <label for="user-password">Actual password</label>
+	             <div class="input-group">
+	               <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+	               <input name="passwordActual" type="password" class="form-control" id="user-passwordactual" placeholder="Type your actual password" />
+	             </div>
+	           </div>
+	          <div class="form-group">
+	            <label for="user-password">New password</label>
+	            <div class="input-group">
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+	              <input name="password" type="password" class="form-control" id="user-password" placeholder="Type a cool new password" />
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label for="user-passwordbis">Confirm new password</label>
+	            <div class="input-group">
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+	              <input name="passwordBis" type="password" class="form-control" id="user-passwordbis" placeholder="Password again" />
+	            </div>
+	          </div>
+	          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	          <button type="submit" class="btn btn-primary">
+	             <span class="glyphicon glyphicon-edit"></span> Send
+	           </button>
+		      </div>
+	      </div>
+	    </div>
+	  </form>
+	  
+	</div>
+	
+  <div class="col-sm-4 col-xs-12">
+    <form role="form" method="POST" action="/user/profile/<%- user.id %>/update">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	        <h4>Avatar</h4>
+	      </div>
+	      <div class="panel-body">
+	        <p>Your actual avatar</p>
+		      <img class="img-thumbnail center-block" src="<%= User.getAvatarPath(user.avatar) %>" style="display:block;" />
+		      <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		      <button type="button" class="btn btn-primary center-block" style="margin-top:5px;">
+		        <span class="glyphicon glyphicon-cloud-upload"></span> Upload new one
+		      </button>
+			  </div>
+		  </div>
+		</form>
+  </div>
+	
+</div>
+
+<div id="player-delete-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Sure you want to delete player <strong id="player-delete-confirm-name"></strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <form method="POST" class="form-horizontal">
+          <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary" id="player-delete-perform">Yup</button>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-typeahead/bootstrap-typeahead.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/user/profile_edit.js'></script>") %>

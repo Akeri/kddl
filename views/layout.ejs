@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%- title %></title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--  
+        Stylesheets and Preprocessors
+        ==============================
+
+        You can always bring in CSS files manually with `link` tags, or asynchronously
+        on the client using a solution like AMD (RequireJS).  Or, if you like, you can
+        take advantage of Sails' boilerplate asset management.
+
+        By default, stylesheets from your `assets/linker/styles` folder are included
+        here automatically.  Both CSS (.css) and LESS (.less) are supported.
+        In production, your styles will be minified and concatenated into a single file.
+        
+        To customize any part of the built-in behavior, just edit your Gruntfile.
+        For example, here are a few things you could do:
+            
+            + Change the order of your CSS files
+            + Import stylesheets from other directories
+            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
+    -->
+
+    <!--STYLES-->
+    <link rel="stylesheet" href="/linker/styles/bootstrap.css">
+    <link rel="stylesheet" href="/linker/styles/custom.css">
+    <link rel="stylesheet" href="/linker/styles/layout.css">
+    <!--STYLES END-->
+    <%- blocks.localCSS %>
+  </head>
+
+  <body>
+  
+    <div class="wrapper">
+      <div class="box">
+        <!-- sidebar -->
+        <div class="column col-sm-2 sidebar-offcanvas" id="sidebar">
+          <%- partial("sidebar.ejs") %>
+        </div>
+        <!-- /sidebar -->
+        <div class="row row-offcanvas row-offcanvas-left">
+          <!-- main right col -->
+          <div class="column col-sm-10 col-xs-12" id="main">
+            <!-- top nav -->
+            <header id="top-nav" class="navbar navbar-default navbar-fixed-top" role="navigation">  
+              <%- partial("header.ejs") %>
+            </header>
+            <!-- /top nav -->
+            <div class="padding">
+              <div class="full col-sm-9">
+                <%- body %>
+              </div><!-- /col-9 -->
+            </div><!-- /padding -->
+          </div>
+          <!-- /main -->
+        </div>
+      </div>
+    </div>
+
+    <!--
+        Client-side Templates
+        ========================
+
+    		HTML templates are important prerequisites of modern, rich client applications.
+        To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
+        that you load these templates client-side.
+
+        By default, your Gruntfile is configured to automatically load and precompile
+        client-side JST templates in your `assets/linker/templates` folder, then
+        include them here automatically.
+        
+        To customize this behavior to fit your needs, just edit your Gruntfile.
+        For example, here are a few things you could do:
+
+            + Import templates from other directories
+            + Use a different template engine (handlebars, jade, dust, etc.)
+            + Internationalize your templates using a server-side stringfile
+              before they're served.
+    -->
+
+    <!--TEMPLATES-->
+    
+    <!--TEMPLATES END-->
+
+
+    <!--
+
+      Client-side Javascript
+      ========================
+
+      You can always bring in JS files manually with `script` tags, or asynchronously
+      on the client using a solution like AMD (RequireJS).  Or, if you like, you can 
+      take advantage of Sails' boilerplate asset management.
+
+      By default, filesin your `assets/linker/js` folder are included here
+      automatically.  Both JavaScript (.js) and CoffeeScript (.coffee) are supported.
+      In production, your scripts will be minified and concatenated into a single file.
+      
+      To customize any part of the built-in behavior, just edit your Gruntfile.
+      For example, here are a few things you could do:
+          
+          + Change the order of your scripts
+          + Import scripts from other directories
+          + Use a different preprocessor, like TypeScript
+
+    -->
+
+    <!--SCRIPTS-->
+    <script src="/linker/js/socket.io.js"></script>
+    <script src="/linker/js/sails.io.js"></script>
+    <script src="/linker/js/app.js"></script>
+    <script src="/linker/js/jquery.js"></script>
+    <script src="/linker/js/bootstrap.js"></script>
+    <script src="/linker/js/jgestures.min.js"></script>
+    <script src="/linker/js/jquery.touchSwipe.min.js"></script>
+    <script src="/linker/js/jquery.touchwipe.1.1.1.js"></script>
+    <!--SCRIPTS END-->
+    <%- blocks.localScripts %>
+    
+    <script>
+      // Detect socket disconnect
+      socket.on("disconnect", function(){
+//         window.location.reload();
+      });
+    </script>
+    
+    <script>
+    
+      $("[data-maketooltip][data-toggle]").tooltip();
+    
+      // Off-canvas sidebar toggle
+	    $("[data-toggle=offcanvas]").click(function() {
+	      var $i = $(this).find("i");
+	      if ($i.hasClass("glyphicon-chevron-right")) showMenu();
+	        else hideMenu();
+	    });
+    
+      if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+        $(window).touchwipe({
+          wipeLeft   : function(){hideMenu();},
+          wipeRight  : function(){showMenu();}
+        });
+      }else{
+        $(window).swipe({
+	        swipeLeft   : hideMenu,
+	        swipeRight  : showMenu,
+	        threshold   : 30,
+	        allowPageScroll : "vertical"
+	      });
+      }
+
+	    function showMenu(){
+        $("[data-toggle=offcanvas] i").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-left");
+        $("#sidebar").addClass("active");
+	    }
+	    
+	    function hideMenu(){
+        $("[data-toggle=offcanvas] i").removeClass("glyphicon-chevron-left").addClass("glyphicon-chevron-right");
+        $("#sidebar").removeClass("active");
+	    }
+	    
+    </script>
+    
+  </body>
+</html>

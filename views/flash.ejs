@@ -1,0 +1,28 @@
+<% if (flash && flash.err){ 
+  Object.keys(flash.err).forEach(function(msg){ %>
+    <div class="alert alert-<%- (flash.err[msg].level || 'danger') %> alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <% if (!Array.isArray(flash.err[msg])){ %>
+        <%= flash.err[msg].message %>
+      <% }else{
+        _.each(flash.err[msg], function(err){ %> 
+          <%- err.message %><br />
+        <% }) %>
+      <% } %>
+    </div>
+  <% })
+} %>
+<% if (flash && flash.success){ 
+  Object.keys(flash.success).forEach(function(msg){ %>
+    <div class="alert alert-<%- (flash.success[msg].level || 'success') %> alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <% if (!Array.isArray(flash.success[msg])){ %>
+        <%= flash.success[msg].message %>
+      <% }else{
+        _.each(flash.success[msg], function(succ){ %> 
+          <%- succ.message %><br />
+        <% }) %>
+      <% } %>
+    </div>
+  <% })
+} %>

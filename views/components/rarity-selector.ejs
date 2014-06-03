@@ -1,0 +1,21 @@
+<%
+var args = _.extend({
+  id        : "rarity-selector",
+  rarities  : Armor.rarities,
+  value     : null,
+  noneOpt   : "Select rarity...",
+  multiple  : false
+}, data || {});
+%>
+
+<select id="<%- args.id %>" <% if (args.multiple){ %>multiple title="<%- args.noneTitle || args.noneOpt %>"<% } %>>
+  <% if (!args.multiple && _.isString(args.noneOpt)) { %>
+    <option value=null <% if (args.value == null) { %> selected="selected" <% } %>><%- args.noneOpt %></option>
+  <% } %>
+  <% _.each(args.rarities, function(rarity, key){ %>
+    <option data-maxlevel="<%- rarity.maxLevel %>" value="<%- key %>" <% if (key == args.value){ %> selected="selected" <% } %>>
+      <%- rarity.name.charAt(0).toUpperCase() + rarity.name.slice(1) %>
+    </option>
+  <% }) %>
+</select>
+

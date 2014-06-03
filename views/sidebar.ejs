@@ -1,0 +1,20 @@
+	<% if (session.authenticated){ %>
+<!-- 	  <div class="user-avatar img-circle"></div> -->
+    <div id="user-avatar-wrapper">
+      <img class="img-responsive img-circle" src="<%= User.getAvatarPath(session.User.avatar) %>" />
+    </div>
+	<% } %>
+	<ul class="nav">
+	  <li><a href="/"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+	  <% if (session.authenticated){ %>
+	    <li><a href="/user/show/<%- session.User.id %>"><i class="glyphicon glyphicon-th-large"></i> My profile</a></li>
+	    <% if (sails.services.rolemanager.userInGroup(session.User, "admin")){ %>
+	      <li><a href="/user"><i class="glyphicon glyphicon-user"></i> Manager users</a></li>
+		    <li><a href="/armor/crawler"><i class="glyphicon glyphicon-cloud-download"></i> Armor crawler</a></li>
+	    <% } %>
+	    <li><a href="/armor"><i class="glyphicon glyphicon-screenshot"></i> Armory</a></li>
+	    <li><a href="/session/destroy"><i class="glyphicon glyphicon-log-out"></i> Log out</a></li>
+	  <% }else{ %>
+	    <li><a href="/session/new"><i class="glyphicon glyphicon-log-in"></i> Log in</a></li>
+	  <% } %>
+  </ul>

@@ -1,0 +1,255 @@
+<style>
+  #armor-filter-case > div {
+    padding:0;
+  }
+  #armor-table td {
+    vertical-align:middle;
+  }
+  #armor-filter-case {
+    margin-bottom:10px;
+  }
+  #armor-filter-case > div {
+    padding-left:10px;
+  }
+  #armor-filter-case > div:first-child {
+    padding-left:0;
+  }
+  #armor-filter-case select {
+    line-height:36px;
+  }
+  #armor-filter-case .bootstrap-select {
+    margin-bottom:0;
+  }
+  @media screen and (max-width: 768px) {
+    #armor-filter-case > div {
+      margin-top:10px;
+      padding-left:0;
+    }
+    #armor-filter-case > div:first-child {
+      margin-top:0;
+    }
+  }
+  #armor-table .armor-stat-column {
+    width:65px;
+  }
+</style>
+
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/user/profile/<%- user.id %>"><%= user.nickname %></a></li>
+  <li class="active">Edit armors</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Armors of player <span class="text-primary"><%= player.name %></span></h4>
+  </div>
+  <div class="panel-body" style="padding:5px;">
+    <% if (!player.armors.length){ %>
+      <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
+    <% }else{ %>
+      <div>
+      <% _.each(player.armors, function(armor){ %>
+        <div class="trigger-player-armor-add-dialog" style="display:inline-block;cursor:pointer;"
+        data-user_id="<%- user.id %>" data-player_id="<%- player.id %>"
+        data-player_armor = "<%- _.escape(JSON.stringify(armor)) %>"
+        data-armor="<%- _.escape(JSON.stringify(armors[armor.armorId])) %>"
+        data-toggle="modal" data-target="#player-armor-add-dialog">
+        <%- partial("../components/player-armor-card.ejs", {data : {
+          playerArmor : armor,
+          armor       : armors[armor.armorId],
+          className   : "_col-xs-3"
+        }}) %>
+        </div>
+      <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Pick armors <small>Choose armors by clicking on their name</small></h4>
+  </div>
+  <div class="panel-body">
+    <div id="armor-filter-case" class="row">
+      <div id="armor-name-filter-case" class="col-xs-12 col-sm-4">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input type="text" class="form-control" placeholder="Search by name" id="armor-name-filter">
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-4">
+        <%- partial("../components/rarity-selector.ejs", {data : {
+          id       : "armor-rarity-filter",
+          rarities : _.omit(Armor.rarities, "nemesis"),
+          noneOpt  : "Filter by rarity..."
+        }}) %>
+      </div>
+      <div class="col-xs-12 col-sm-4">
+        <%- partial("../components/element-selector.ejs", {data : {
+          id       : "armor-element-filter"
+        }}) %>
+      </div>
+    </div>
+    <table id="armor-table" class="footable table table-hover toggle-square-filled" data-page-size="10">
+      <thead>
+        <tr>
+          <th data-sort-ignore="true">&nbsp;</th>
+          <th data-name="name">Name</th>
+          <th data-name="elements" style="text-align:center;">Elem</th>
+          <th data-name="rarity" data-hide="phone">Rarity</th>
+          <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Att</th>
+          <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Def</th>
+          <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Def +</th>
+          <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Att +</th>
+<!--           <th data-sort-ignore="true">&nbsp;</th> -->
+        </tr>
+      </thead>
+      <tbody>
+      <% _.each(armors, function(armor){ %>
+        <tr data-id="<%= armor.id %>" data-model="armor">
+          <td style="white-space:nowrap;">
+            <img src="<%= armor.mainPic || armor.secondaryPic || Armor.defaultPic %>" style="width:auto;height:40px;" />
+          </td>
+          <td>
+            <a class="trigger-player-armor-add-dialog"
+            data-user_id="<%- user.id %>" data-player_id="<%- player.id %>" data-armor="<%- _.escape(JSON.stringify(armor)) %>"
+            data-toggle="modal" data-target="#player-armor-add-dialog">
+              <%= armor.name %>
+            </a>
+          </td>
+          <td data-value="<%- armor.elements.join(',') %>" style="text-align:center;">
+            <%- Armor.getElemIcons(armor.elements) %>
+          </td>
+          <td data-value="<%- armor.rarity %>"><%= (function(){
+            var rarity = Armor.rarities[armor.rarity].name;
+            return rarity.charAt(0).toUpperCase() + rarity.slice(1)
+          })() %></td>
+          <td><%= armor.regMaxAtt %></td>
+          <td><%= armor.regMaxDef %></td>
+          <td><%= armor.plusMaxAtt %></td>
+          <td><%= armor.plusMaxDef %></td>
+<!--           <td>Opts</td> -->
+        </tr>
+      <% }) %>
+        <tfoot>
+          <tr>
+            <td colspan="6" class="text-center">
+              <ul class="pagination pagination-centered hide-if-no-paging"></ul>
+            </td>
+          </tr>
+        </tfoot>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="player-armor-add-dialog" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <img class="player-armor-add-thumb hidden-sm hidden-md hidden-lg img-responsive" style="width:auto;height:60px;display:inline-block;margin-right:15px;" />
+          <span id="player-armor-add-name" class="text-primary">&nbsp;</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+      
+        <form id="own-new-armor" method="POST" class="form-horizontal">
+          <div class="row">
+            <div class="col-sm-4 hidden-xs" style="padding:0;">
+              <img class="player-armor-add-thumb" style="width:100%;height:auto;" />
+            </div>
+            <div class="col-sm-8 col-xs-12">
+	            <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	            <input type="hidden" name="id" class="player-armor-add-id" />
+	            <input type="hidden" name="armorId" id="player-armor-add-armor-id" />
+              <div class="row">
+                <div class="col-xs-6">
+                  <div class="form-group">
+	                  <label for="player-armor-add-plus">Version</label>
+	                  <div class="input-group">
+	                    <input name="plus" id="player-armor-add-plus" type="checkbox" />
+	                  </div>
+	                </div>
+                </div>
+                <div class="col-xs-6">
+                  <div class="form-group">
+	                  <label for="player-armor-add-level">Current level</label>
+	                  <div class="input-group">
+	                    <input name="level" type="number" min="1" step="1" class="form-control" id="player-armor-add-level" placeholder="Type current level" />
+	                    <span class="input-group-btn">
+	                      <button id="player-armor-add-max-level" class="btn btn-default" type="button">Max!</button>
+	                    </span>
+	                  </div>
+	                </div>
+                </div>
+              </div>
+	          
+              <div class="row">
+                <div class="col-xs-6">
+                  <div class="form-group" style="padding-right:15px;">
+                    <span>Attack</span>
+	                  <div class="input-group" title="Attack">
+	                    <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+	                    <span class="form-control" id="player-armor-add-att"></span>
+	                  </div>
+                  </div>
+                </div>
+                <div class="form-group col-xs-6">
+                  <div class="form-group" style="padding-left:15px;">
+                    <span>Defense</span>
+	                  <div class="input-group" title="Defense">
+	                    <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+	                    <span class="form-control" id="player-armor-add-def"></span>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+	          </div>
+	        </div>
+        </form>
+        
+        <form id="delete-owned-armor" method="POST">
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <input type="hidden" name="id" class="player-armor-add-id" />
+        </form>
+        
+        <form id="fuse-owned-armor" method="POST">
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <input type="hidden" name="id" class="player-armor-add-id" />
+        </form>
+        
+      </div>
+      <div class="modal-footer" style="margin-top:0;">
+        <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+        <button type="submit" form="delete-owned-armor" class="btn-owned-armor btn btn-danger"
+        title="Delete armor definitely">
+          Delete</button>
+        <button type="submit" form="fuse-owned-armor" class="btn-owned-armor btn btn-primary"
+        title="Delete armor but remember it">
+          Fuse</button>
+        <button type="submit" form="own-new-armor" class="btn-new-armor btn btn-primary">
+          &nbsp;</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localCSS", "<link rel='stylesheet' href='/lib/footable/footable-core.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-switch/bootstrap-switch.min.css'>") %>
+
+<% block("localScripts", "<script src='/lib/footable/footable.core.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.filter.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.paginate.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.sort.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-switch/bootstrap-switch.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/player/edit_armors.js'></script>") %>

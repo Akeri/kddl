@@ -1,0 +1,117 @@
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-switch/bootstrap-switch.min.css'>") %>
+
+<style>
+  .row > div {
+    padding-left:0;
+  }
+  .row > div:last-child {
+    padding-right:0;
+  }
+  @media screen and (max-width: 768px) {
+    .row > div {
+      padding-right:0;
+    }
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/user/profile/<%- session.User.id %>"><%= session.User.nickname %></a></li>
+  <li><a href="/user/profile/<%- session.User.id %>/edit">Edit profile</a></li>
+  <li class="active">Edit player</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<form role="form" method="POST" action="/user/<%- userId %>/player/update/<%- player.id %>">
+  <div class="row">
+  
+    <div class="col-sm-6 col-xs-12">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+			    <h4>Add player</h4>
+			  </div>
+			  <div class="panel-body">
+			    <div class="form-group">
+			      <label for="player-name">*Player name</label>
+			      <div class="input-group">
+			        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+			        <input name="name" type="text" class="form-control" id="player-name" placeholder="Name of player in game"
+			          value="<%= player.name %>" />
+			      </div>
+			    </div>
+			    <div class="form-group">
+            <label for="player-level">Level aprox.</label>
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-upload"></span></span>
+              <input name="level" type="number" min="0" step="100" class="form-control" id="player-level" placeholder="Actually not very important"
+                <% if (player.level !== undefined){ %> value="<%= player.level %>" <% } %>/>
+            </div>
+          </div>
+			    <div class="form-group">
+			      <label for="player-guild">Guild membership</label>
+			      <div class="input-group">
+			        <span class="input-group-addon"><span class="glyphicon glyphicon-flag"></span></span>
+			        <%- partial("../components/guild-selector.ejs", {data : {
+		            id       : "player-guild",
+		            name     : "guildId",
+		            guilds   : guilds,
+		            value    : player.guildId
+		          }}) %>
+			      </div>
+			    </div>
+			    <div class="form-group">
+		        <label for="player-guild-rank">Guild rank</label>
+		        <div class="input-group">
+		          <span class="input-group-addon"><span class="glyphicon glyphicon-bookmark"></span></span>
+		          <%- partial("../components/rank-selector.ejs", {data : {
+		            id       : "player-guild-rank",
+		            name     : "guildRank",
+		            value    : player.guildRank
+		          }}) %>
+		        </div>
+		      </div>
+			  </div>
+			</div><!-- /panel -->
+    </div>
+    
+    <div class="col-sm-6 col-xs-12">
+      <div class="panel panel-default panel-body">
+        <% if (userId){ %>
+	        <div class="form-group">
+	          <label for="player-main">Is this player main?</label>
+	          <div class="input-group">
+	            <input name="main" id="player-main" type="checkbox"
+	              <% if (player.main === true){ %> checked="checked" <% } %>/>
+            </div>
+	        </div>
+        <% } %>
+        <div class="form-group">
+	        <label for="player-description">Do you want to enter some description?</label>
+	        <textarea name="description" id="player-description" class="form-control" placeholder="Optional description"
+	        style="resize:vertical;min-height:50px;max-height:160px;"><% if (player.description != ""){ %><%= player.description %><% } %></textarea>
+	      </div>
+        <div class="form-group">
+	        <label for="player-captions">Labels to show</label><br />
+	        <div class="input-group">
+	          <span class="input-group-addon"><span class="glyphicon glyphicon-tags"></span></span>
+	          <input name="captions" type="text" class="form-control" id="user-captions" placeholder="separated by commas"
+	            value="<%= player.captions.join(', ') %>" />
+	        </div>
+	      </div>
+      </div>
+    </div>
+		
+	</div>
+	<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	<div class="btn-toolbar">
+    <button type="submit" class="btn btn-lg btn-success">
+      <span class="glyphicon glyphicon-edit"></span> Update
+    </button>
+  </div>
+</form>
+
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-switch/bootstrap-switch.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/player/new.js'></script>") %>

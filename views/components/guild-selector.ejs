@@ -1,0 +1,26 @@
+<%
+var args = _.extend({
+  id        : "guild-selector",
+  name      : "guildId",
+  guilds    : [],
+  value     : null,
+  noneOpt   : "Select guild..."
+}, data || {});
+%>
+
+<style>
+  .bootstrap-select-searchbox + ul.dropdown-menu.selectpicker {
+    margin-top:8px !important;
+  }
+</style>
+
+<select id="<%- args.id %>" name="<%- args.name %>" data-live-search="true">
+  <% if (_.isString(args.noneOpt)) { %>
+    <option value=null <% if (args.value == null) { %> selected="selected" <% } %>><%- args.noneOpt %></option>
+  <% } %>
+  <% _.each(args.guilds, function(guild){ %>
+    <option value="<%- guild.id %>" <% if (guild.id == args.value){ %> selected="selected" <% } %>>
+      <%- guild.name %>
+    </option>
+  <% }) %>
+</select>

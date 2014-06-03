@@ -1,0 +1,268 @@
+<% block("localCSS", "<link rel='stylesheet' href='/lib/flags/flags.css'>") %>
+
+<% var isAdmin = sails.services.rolemanager.userInGroup(session.User, "admin"); %>
+
+<style>
+  .row > div {
+    padding-left:0;
+  }
+  .row > div:last-child {
+    padding-right:0;
+  }
+  @media screen and (max-width: 768px) {
+    .row > div {
+      padding-right:0;
+    }
+  }
+  #user-details td {
+    vertical-align:middle;
+    text-align:left;
+    padding:4px 0;
+  }
+  #user-details td:first-child {
+    padding-right:5px;
+  }
+  #user-details td:nth-child(2) {
+    font-weight:bold;
+    padding-right:10px;
+    text-align:left;
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <% if (isAdmin){ %><li><a href="/user">User</a></li><% } %>
+  <li class="active"><%= user.nickname %></li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div class="row">
+
+  <div class="col-lg-10 col-md-9 col-sm-8 col-xs-12">
+  
+		<div class="panel panel-default">
+			<div class="panel-heading">
+		    <h4 style="display:inline-block">
+		      <img class="hidden-lg hidden-md hidden-sm img-responsive img-circle" src="<%= User.getAvatarPath(user.avatar) %>" style="width:auto;height:60px;display:inline-block;margin-right:15px;" />
+		      <span style="text-shadow:1px -1px 1px #ffffff;"><%= user.nickname %></span>
+		    </h4>
+		    <div class="pull-right">
+          <% if (user.online){ %>
+            <span title="online" class="glyphicon glyphicon-user text-success"></span>
+          <% }else{ %>
+            <span title="offline" class="glyphicon glyphicon-user text-default"></span>
+          <% } %>
+        </div>
+<!-- 		    <span class="label label-default pull-right"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span> -->
+			</div>
+		  <div class="panel-body">
+		    <div class="titles-container" style="text-align:right;margin-bottom:15px;">
+		      <span class="label label-default"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span>
+		      <% _.each(user.captions, function(caption){ %>
+		        <span class="label label-info"><%= caption %></span>
+		      <% }) %>
+		    </div>
+		    <table id="user-details">
+		      <% if (user.country){ %>
+			      <tr>
+			        <td><span class="glyphicon glyphicon-globe"></span></td>
+			        <td>Country:</td>
+			        <td>
+			          <span style="vertical-align:middle;"><%- user.country.name %></span>
+			          <div class="flag flag-<%- user.country.cca2.toLowerCase() %>" style="display:inline-block;margin-left:5px;vertical-align:middle;" ></div>
+		          </td>
+			      </tr>
+			    <% } %>
+		      <% if (user.timezone){ %>
+		        <tr>
+		          <td><span class="glyphicon glyphicon-time"></span></td>
+		          <td>Timezone:</td>
+		          <td>
+		            <div style="display:inline-block;margin-right:8px;">
+		              <span id="user-timezone"><%- user.timezone %></span>
+	               </div>
+		            <div style="display:inline-block;">
+		              <strong>Current time:</strong> <span id="user-actual-time"></span>
+	              </div>
+              </td>
+            </tr>
+			    <% } %>
+		    </table>
+<!-- 			  <strong>email:</strong> <span><%= user.email %></span> -->
+		    <% 
+		    var isSelfProfile = user.id == session.User.id;
+		    var canEditUser = sails.services.rolemanager.userInGroup(session.User, "admin");
+		    if (isSelfProfile || canEditUser){ %>
+		      <hr />
+		      <div>
+		      <% if (isSelfProfile){ %>
+		        <a class="btn btn-medium btn-primary" href="/user/profile/<%= user.id %>/edit">Edit profile</a>
+		      <% } %>
+		      <% if (canEditUser){ %>
+		        <a class="btn btn-medium btn-primary" href="/user/edit/<%= user.id %>">Edit user</a>
+		      <% } %>
+		      </div>
+		    <% } %>
+		  </div>
+		</div>
+		
+	</div>
+	
+	<div class="col-lg-2 col-md-3 col-sm-4 hidden-xs">
+	  <div class="panel panel-default panel-body">
+	    <img class="img-thumbnail center-block" src="<%= User.getAvatarPath(user.avatar) %>" />
+	  </div>
+	</div>
+	
+</div>
+
+<div class="row">
+
+  <% if (!user.players.length){ %>
+  
+    <div class="col-lg-12">
+      <div class="panel panel-default panel-body">
+	      <p class="lead">No players</p>
+	      <% if (isSelfProfile){ %>
+		      <p>Do you want to add one?</p>
+		      <a title="Add player" class="btn btn-medium btn-success" href="/user/<%- user.id %>/player/new">
+		        <span class="glyphicon glyphicon-plus"></span>
+		        <span>Add player</span>
+		      </a>
+	      <% } %>
+      </div>
+    </div>
+  
+  <% }else{ %>
+	
+	  <%
+	    var mainPlayerId = (function(){
+	      var mainPlayer = _.findWhere(user.players, {main : true});
+	      return mainPlayer !== undefined ? mainPlayer.id : user.players[0].id;
+	    })();
+	  %>
+		<!-- Nav tabs -->
+		<div class="col-lg-12">
+		  <ul class="nav nav-tabs bg-default">
+		    <% _.each(user.players, function(player){ %>
+		      <li <% if (player.id == mainPlayerId){ %> class="active" <% } %>><a href="#<%= player.id %>" data-toggle="tab">
+		        <% if (player.main === true){ %>
+		          <span title="Main player" class="glyphicon glyphicon-star"></span>
+	          <% } %>
+	          <span><%= player.name %></span>
+		      </a></li>
+		    <% }) %>
+		  </ul>
+		  <!-- Tab panes -->
+		  <div class="tab-content">
+		    <% _.each(user.players, function(player){ %>
+		      <div id="<%= player.id %>" class="tab-pane fade <% if (player.id == mainPlayerId){ %> active in<% } %>">
+		        <div class="player-panel panel panel-default panel-body">
+		        
+		          <div class="row">
+		          
+		            <div class="col-sm-8 col-xs-12">
+				          <table style="margin-bottom:10px;">
+				            <tr>
+				              <td>
+				                <span title="Guild membership" class="glyphicon glyphicon-flag"></span>
+				                <% if (player.guild != null){ %>
+				                  <span><%- player.guild.name %></span>
+				                <% }else{ %>
+				                  <i>no guild</i>
+				                <% } %>
+				              </td>
+				              <td style="padding-left:10px;">
+				                <% if (player.guildRank != null){ %>
+				                  <span title="Guild rank" class="glyphicon glyphicon-bookmark"></span>
+				                  <span><%- Player.ranks[player.guildRank].name %></span>
+				                <% } %>
+				              </td>
+				            </tr>
+				          </table>
+				        </div>
+				        
+				        <div class="col-sm-4 col-xs-12" style="text-align:right;">
+				          <% _.each(player.captions, function(caption){ %>
+				            <span class="label label-info" style="line-height:22px;"><%= caption %></span>
+				          <% }) %>
+				        </div>
+				        
+				      </div>
+				      
+				      <% if (player.description != ""){ %>
+			          <blockquote>
+			            <footer><%= player.description %></footer>
+			          </blockquote>
+			        <% } %>
+			        
+			        <% if (!player.armors.length){ %>
+					      <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
+					    <% }else{ %>
+					      <div>
+					      <% _.each(player.armors, function(armor){ %>
+					        <div style="display:inline-block;cursor:pointer;">
+					          <a href="/armor/show/<%- armor.armorId %>">
+						        <%- partial("../components/player-armor-card.ejs", {data : {
+						          playerArmor : armor,
+						          armor       : armors[armor.armorId]
+						        }}) %>
+						        </a>
+					        </div>
+					      <% }) %>
+					      </div>
+					    <% } %>
+			        
+			        <% if (isSelfProfile || canEditUser){ %>
+			          <hr />
+			          <a title="Update armors" class="btn btn-medium btn-primary" href="/user/<%- user.id %>/player/editarmors/<%- player.id %>">
+	                <span>Update armors</span>
+	              </a>
+			          <a title="Edit player" class="btn btn-medium btn-default" href="/user/<%- user.id %>/player/edit/<%- player.id %>">
+			            <span class="glyphicon glyphicon-edit"></span>
+			            <span class="hidden-xs">Edit player</span>
+			          </a>
+			          <a title="Delete player" href="#" class="btn-player-delete btn btn-default"
+		              data-player_id="<%- player.id %>" data-player_name="<%= player.name %>" data-user_id="<%- user.id %>"
+		              data-toggle="modal" data-target="#player-delete-confirm"><i class="glyphicon glyphicon-trash"></i>
+		              <span class="hidden-xs">Delete player</span>
+	              </a>
+			        <% } %>
+		            
+		        </div>
+		      </div>
+		    <% }) %>
+		  </div>
+	  </div>
+	  
+	<% } %>
+
+</div>
+
+<div id="player-delete-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Sure you want to delete player <strong id="player-delete-confirm-name"></strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <form method="POST" class="form-horizontal">
+          <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary" id="player-delete-perform">Yup</button>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localScripts", "<script src='/lib/moment/moment.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment-timezone.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment-timezone-data.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/user/profile.js'></script>") %>

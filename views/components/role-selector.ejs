@@ -1,0 +1,20 @@
+<%
+var args = _.extend({
+  id        : "role-selector",
+  name      : "role",
+  roles     : sails.services.rolemanager.roles,
+  value     : null,
+  noneOpt   : "Select role..."
+}, data || {});
+%>
+
+<select id="<%- args.id %>" name="<%- args.name %>">
+  <% if (_.isString(args.noneOpt)) { %>
+    <option value=null <% if (args.value == null) { %> selected="selected" <% } %>><%- args.noneOpt %></option>
+  <% } %>
+  <% _.each(args.roles, function(role, key){ %>
+    <option value="<%- key %>" <% if (key == args.value){ %> selected="selected" <% } %>>
+      <%- role.label %>
+    </option>
+  <% }) %>
+</select>

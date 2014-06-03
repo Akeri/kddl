@@ -1,0 +1,51 @@
+<style>
+  .row > div {
+    padding-left:0;
+  }
+  .row > div:last-child {
+    padding-right:0;
+  }
+  @media screen and (max-width: 768px) {
+    .row > div {
+      padding-right:0;
+    }
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/user">User</a></li>
+  <li class="active"><%= user.nickname %></li>
+</ol>
+
+<div class="row">
+
+  <div class="col-sm-8 col-xs-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+		    <h4 style="display:inline-block">
+		      <img class="hidden-sm img-responsive img-circle" src="<%= User.getAvatarPath(user.avatar) %>" style="width:auto;height:60px;display:inline-block;margin-right:15px;" />
+		      <%= user.nickname %>
+		    </h4>
+<!-- 		    <span class="label label-default pull-right"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span> -->
+			</div>
+		  <div class="panel-body">
+		    <div class="titles-container" style="text-align:right;margin-bottom:15px;">
+		      <span class="label label-default"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span>
+		      <% _.each(user.captions, function(caption){ %>
+		        <span class="label label-info"><%= caption %></span>
+		      <% }) %>
+		    </div>
+			  <strong>email:</strong> <span><%= user.email %></span>
+		<!-- 		<a class="btn btn-medium btn-primary" href="/user/edit/<%= user.id %>">Edit</a> -->
+		  </div>
+		</div>
+	</div>
+	
+	<div class="col-sm-4 hidden-xs">
+	  <div class="panel panel-default panel-body">
+	    <img class="img-thumbnail" src="<%= User.getAvatarPath(user.avatar) %>" />
+	  </div>
+	</div>
+
+</div>

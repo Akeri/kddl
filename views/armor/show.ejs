@@ -1,0 +1,200 @@
+<%
+var nullStat = "unkn";
+%>
+
+<style>
+  #armor-show.container-fluid {
+    padding:0;
+  }
+  #armor-show .row > div {
+    padding-left:0;
+  }
+  #armor-show .row > div:last-child {
+    padding-right:0;
+  }
+  @media screen and (max-width: 768px) {
+    #armor-show.container-fluid > .row > div {
+      padding-right:0;
+	  }
+  }
+  #armor-details {
+    border-width:0;
+  }
+  #armor-details td:first-child {
+    font-weight:normal;
+    font-size:14px;
+    text-align:right;
+  }
+  #armor-details td:first-child + td {
+    font-size:18px;
+    padding-left:15px;
+    text-align:left;
+  }
+  #armor-element .glyphicon {
+    text-shadow:1px -1px 1px #555555;
+  }
+  #armor-element, #armor-rarity {
+    font-size:16px;
+  }
+  #armor-element .glyphicon {
+    font-size:32px;
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/armor">Armor</a></li>
+  <li class="active"><%= armor.name %></li>
+</ol>
+
+<div id="armor-show" class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4><%= armor.name %></h4>
+        </div>
+        <div class="panel-body" style="text-align:center;">
+          <div class="row">
+            <div class="col-lg-12 col-sm-12">
+		          <table id="armor-details" style="display:inline-table;">
+		            <tr id="armor-element">
+		              <td>Element:</td>
+		              <td><%- Armor.getElemIcons(armor.elements) %></td>
+		            </tr>
+		            <tr id="armor-rarity">
+		              <td>Rarity:</td>
+		              <td style="font-weight:bold;"><%= (function(){
+				            var rarity = Armor.rarities[armor.rarity].name;
+				            return rarity.charAt(0).toUpperCase() + rarity.slice(1)
+				          })() %></td>
+		            </tr>
+		          </table>
+		        </div>
+		        <div class="col-lg-12 col-sm-12">
+		          <hr />
+		          <div class="row">
+		          
+		            <div class="col-lg-6 col-sm-12">
+		              <h4>Regular version</h4>
+						      <div class="row">
+						        <p>Max level</p>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Maximum attack of regular version">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+						            <span name="regMaxAtt" class="form-control" id="armor-reg-max-att"><%= armor.regMaxAtt || nullStat %></span>
+						          </div>
+						        </div>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Maximum defense of regular version">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+						            <span name="regMaxDef" class="form-control" id="armor-reg-max-def"><%= armor.regMaxDef || nullStat %></span>
+						          </div>
+						        </div>
+						      </div>
+						      <div class="row">
+                    <p>Base stats</p>
+                    <div class="form-group col-xs-6">
+                      <div class="input-group" title="Base attack of regular version">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+                        <span name="regBaseAtt" class="form-control" id="armor-reg-base-att"><%= armor.regBaseAtt || nullStat %></span>
+                      </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                      <div class="input-group" title="Base defense of regular version">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+                        <span name="regBaseDef" class="form-control" id="armor-reg-base-def"><%= armor.regBaseDef || nullStat %></span>
+                      </div>
+                    </div>
+                  </div>
+						      <div class="row">
+						        <p>Increment by level</p>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Increment of attack by level">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+						            <span name="regAttStep" class="form-control" id="armor-reg-att-step"><%= armor.regAttStep || nullStat %></span>
+						          </div>
+						        </div>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Increment of defense by level">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+						            <span name="regDefStep" class="form-control" id="armor-reg-def-step"><%= armor.regDefStep || nullStat %></span>
+						          </div>
+						        </div>
+						      </div>
+						    </div>
+						    
+						    <hr class="hidden-lg" />
+								<div class="col-lg-6 col-sm-12">
+					        <h4>Plus version</h4>
+						      <div class="row">
+						        <p>Max level</p>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Maximum attack of plus version">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+						            <span name="plusMaxAtt" class="form-control" id="armor-plus-max-att"><%= armor.plusMaxAtt || nullStat %></span>
+						          </div>
+						        </div>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Maximum defense of plus version">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+						            <span name="plusMaxDef" class="form-control" id="armor-plus-max-def"><%= armor.plusMaxDef || nullStat %></span>
+						          </div>
+						        </div>
+						      </div>
+						      <div class="row">
+                    <p>Base stats</p>
+                    <div class="form-group col-xs-6">
+                      <div class="input-group" title="Base attack of plus version">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+                        <span name="plusBaseAtt" class="form-control" id="armor-plus-base-att"><%= armor.plusBaseAtt || nullStat %></span>
+                      </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                      <div class="input-group" title="Base defense of plus version">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+                        <span name="plusBaseDef" class="form-control" id="armor-plus-base-def"><%= armor.plusBaseDef || nullStat %></span>
+                      </div>
+                    </div>
+                  </div>
+						      <div class="row">
+						        <p>Increment by level</p>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Increment of attack by level">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+						            <span name="plusAttStep" class="form-control" id="armor-plus-att-step"><%= armor.plusAttStep || nullStat %></span>
+						          </div>
+						        </div>
+						        <div class="form-group col-xs-6">
+						          <div class="input-group" title="Increment of defense by level">
+						            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+						            <span name="plusDefStep" class="form-control" id="armor-plus-def-step"><%= armor.plusDefStep || nullStat %></span>
+						          </div>
+						        </div>
+						      </div>
+				        </div>
+				        
+			        </div>
+		        </div>
+			    </div>
+			    <hr />
+			    <a href="<%= sails.services.wikiacrawler.wikiaUri + armor.wikiaLink %>" target="_blank">Wikia reference</a>
+        </div> <!-- </panel-body> -->
+      </div>
+    </div>
+	  <div class="col-sm-4">
+	    <div class="panel panel-default">
+	      <div class="panel-body">
+          <img src="<%= armor.mainPic || armor.secondaryPic || Armor.defaultPic %>" class="img-responsive center-block" />
+        </div>
+	    </div>
+      <% if (armor.mainPic && armor.secondaryPic && armor.mainPic != armor.secondaryPic){ %>
+	    <div class="panel panel-default">
+	      <div class="panel-body">
+          <img src="<%= armor.secondaryPic %>" class="img-responsive center-block" />
+	      </div>
+	    </div>
+      <% } %>
+	  </div>
+	</div>
+</div>

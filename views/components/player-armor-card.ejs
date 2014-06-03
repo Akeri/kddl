@@ -1,0 +1,26 @@
+<%
+var args = _.extend({
+  playerArmor : null,
+  armor       : null,
+  className   : ""
+}, data || {});
+%>
+
+<div class="player-armor-card <%- args.className %>" data-maketooltip data-toggle="tooltip" title="<%= args.armor.name %>">
+  <div class="panel panel-default panel-body" style="text-align:center;">
+    <% if (args.playerArmor.plus === true){ %><span class="label-plus label label-info">plus</span><% } %>
+    <img src="<%- args.armor.mainPic || args.armor.secondaryPic || args.armor.defaultPic %>" />
+    <div class="player-armor-card-name">
+      <span class="text-primary"><%= args.armor.name %><% if (args.playerArmor.plus === true){ %>+<% } %></span>
+    </div>
+    <div class="progress">
+		  <div class="progress-bar progress-bar-<%- args.playerArmor.level == args.armor.maxLevel ? 'success' : 'warning' %>"
+		  role="progressbar"
+		  aria-valuenow="<%- args.playerArmor.level %>"
+		  aria-valuemin="1" aria-valuemax="100"
+		  style="width:<%- (args.playerArmor.level * 100) / args.armor.maxLevel %>%;">
+		    <span><%- args.playerArmor.level %></span>
+		  </div>
+		</div>
+  </div>
+</div>

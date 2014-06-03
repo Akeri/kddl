@@ -1,0 +1,186 @@
+<% block("localCSS", "<link rel='stylesheet' href='/lib/footable/footable-core.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/flags/flags.css'>") %>
+
+<style>
+  #user-filter-case > div {
+    padding:0;
+  }
+  #user-table td {
+    vertical-align:middle;
+  }
+  #user-table .user-tools {
+    width:120px;
+  }
+  .footable-row-detail-value .user-tools-case {
+    padding-top:10px;
+  }
+  #user-filter-case {
+    margin-top:10px;
+    margin-bottom:10px;
+  }
+  #user-filter-case > div {
+    padding-left:10px;
+  }
+  #user-filter-case > div:first-child {
+    padding-left:0;
+  }
+  #user-filter-case select {
+    line-height:36px;
+  }
+  #user-filter-case .bootstrap-select {
+    margin-bottom:0;
+  }
+  @media screen and (max-width: 768px) {
+    #user-filter-case > div {
+      margin-top:10px;
+      padding-left:0;
+    }
+    #user-filter-case > div:first-child {
+      margin-top:0;
+    }
+  }
+  .user-avatar-thumb {
+    width:auto;
+    height:45px;
+  }
+  .user-avatar-thumb + .glyphicon-user {
+    float:left;
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">User</li>
+</ol>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Users</h4>
+  </div>
+  <div class="panel-body">
+    <a href="/user/new" class="btn btn-success">
+      <i class="glyphicon glyphicon-plus"></i> New guy
+    </a>
+    <div id="user-filter-case" class="row">
+      <div id="user-name-filter-case" class="col-xs-12 col-sm-4">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input type="text" class="form-control" placeholder="Search by nick" id="user-name-filter">
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-4">
+        <%- partial("../components/role-selector.ejs", {data : {
+          id       : "user-role-filter",
+          noneOpt  : "Filter by role..."
+        }}) %>
+      </div>
+      <!-- Filters -->
+    </div>
+    <table id="user-table" class="footable table table-hover toggle-square-filled" data-page-size="10">
+      <thead>
+        <tr>
+          <th data-sort-ignore="true" data-name="avatar">&nbsp;</th>
+          <th data-name="nickname" data-toggle="true">Nick</th>
+          <th data-name="online">&nbsp;</th>
+          <th data-name="role">Role</th>
+          <th data-name="country" data-hide="phone,tablet">Country</th>
+          <th data-name="email" data-hide="phone,tablet">E-mail</th>
+          <th data-name="labels" data-hide="all">Labels</th>
+          <th data-sort-ignore="true" data-hide="phone" data-class="user-tools">Tools</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% _.each(users, function(user){ %>
+        <tr data-id="<%= user.id %>" data-model="user">
+          <td style="width:30px;padding:5px;">
+            <img class="img-circle user-avatar-thumb <%- user.online ? 'online' : 'offline' %>" src="<%= User.getAvatarPath(user.avatar) %>">
+          </td>
+          <td>
+            <a href="/user/profile/<%= user.id %>" title="<%= user.nickname %>"><%= user.nickname %></a>
+          </td>
+          <td data-value="<%- user.online ? 'online' : 'offline' %>">
+            <% if (user.online){ %>
+              <span title="online" class="glyphicon glyphicon-user text-success"></span>
+            <% }else{ %>
+              <span title="offline" class="glyphicon glyphicon-user text-default"></span>
+            <% } %>
+          </td>
+          <td data-value="<%- user.role %>">
+            <span class="label label-default"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span>
+          </td>
+          <td>
+            <% if (user.country){ %>
+	            <div class="flag flag-<%- user.country.cca2.toLowerCase() %>" style="display:inline-block;margin-left:5px;vertical-align:middle;" ></div>
+	            <span style="vertical-align:middle;"><%- user.country.name %></span>
+	          <% }else{ %>
+	            <i>unknown</i>
+	          <% } %>
+          </td>
+          <td><%= user.email %></td>
+          <td><%
+            if (!user.captions.length){ %>
+              <i>none</i>
+            <% }else{
+              _.each(user.captions, function(caption){ %>
+		            <span class="label label-info"><%= caption %></span>
+		          <% })
+            } %>
+          </td>
+          <td>
+            <div class="user-tools-case">
+	            <div class="btn-group btn-group-sm">
+	              <a title="Show" href="/user/profile/<%= user.id %>" class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i></a>
+	              <a title="Edit" href="/user/edit/<%= user.id %>" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i></a>
+	            </div>
+	            <button title="Delete" type="button" class="btn-user-delete btn btn-danger btn-sm"
+	            data-user_id="<%- user.id %>" data-user_nickname="<%= user.nickname %>" data-toggle="modal" data-target="#user-delete-confirm">
+	              <i class="glyphicon glyphicon-trash"></i>
+	            </button>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+        <tfoot>
+          <tr>
+            <td colspan="6" class="text-center">
+              <ul class="pagination pagination-centered hide-if-no-paging"></ul>
+            </td>
+          </tr>
+        </tfoot>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="user-delete-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" class="form-horizontal">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">Confirm</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Sure you want to delete <strong id="user-delete-confirm-nickname"></strong>?</p>
+	        <div class="checkbox">
+	           <label><input type="checkbox" name="deletePlayers" /> Also delete his players</label>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary" id="user-delete-perform">Yup</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+    </form>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localScripts", "<script src='/lib/footable/footable.core.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.filter.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.paginate.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.sort.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/user/index.js'></script>") %>

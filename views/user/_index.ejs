@@ -1,0 +1,102 @@
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">User</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Users</h4>
+  </div>
+  <div class="panel-body">
+    <a href="/user/new" class="btn btn-success">
+      <i class="glyphicon glyphicon-plus"></i> New
+    </a>
+    <hr />
+    <table class="table">
+	    <thead>
+	      <tr>
+	        <th>&nbsp;</th>
+	        <th>Nickname</th>
+	        <th class="hidden-xs">&nbsp;</th>
+	        <th class="hidden-xs">&nbsp;</th>
+	        <th class="hidden-xs">&nbsp;</th>
+	        <th class="visible-xs">Options</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    <% _.each(users, function(user){ %>
+	      <tr data-id="<%= user.id %>" data-model="user">
+	        <td>
+	          <% if (user.online){ %>
+	            <span title="online" class="glyphicon glyphicon-user text-success"></span>
+	          <% }else{ %>
+	            <span title="offline" class="glyphicon glyphicon-user text-default"></span>
+	          <% } %>
+	        </td>
+	        <td><%= user.nickname %></td>
+	        <td class="hidden-xs">
+	          <a href="/user/profile/<%= user.id %>" class="btn btn-sm btn-primary">
+	            <i class="glyphicon glyphicon-eye-open"></i> Show
+	          </a>
+	        </td>
+	        <td class="hidden-xs">
+	          <a href="/user/edit/<%= user.id %>" class="btn btn-sm btn-primary">
+	            <i class="glyphicon glyphicon-edit"></i> Edit
+	          </a>
+	        </td>
+	        <td class="hidden-xs">
+<!-- 	          <form action="/user/destroy/<%= user.id %>" method="POST"> -->
+<!-- 	            <input type="hidden" name="_method" value="delete" /> -->
+<!-- 	            <input type="hidden" name="_csrf" value="<%= _csrf %>" /> -->
+	            <button type="button" class="btn-user-delete btn btn-sm btn-danger"
+	            data-user_id="<%- user.id %>" data-user_nickname="<%= user.nickname %>" data-toggle="modal" data-target="#user-delete-confirm">
+	              <i class="glyphicon glyphicon-trash"></i> Delete
+	            </button>
+<!-- 	          </form> -->
+	        </td>
+	        <td class="visible-xs">
+            <div class="btn-group btn-group-sm">
+              <a title="Show" href="/user/profile/<%= user.id %>" class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i></a>
+              <a title="Edit" href="/user/edit/<%= user.id %>" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i></a>
+            </div>
+<!--             <form class="btn-group btn-group-sm" action="/user/destroy/<%= user.id %>" method="POST"> -->
+<!--              <input type="hidden" name="_method" value="delete" /> -->
+<!--              <input type="hidden" name="_csrf" value="<%= _csrf %>" /> -->
+             <button title="Delete" type="button" class="btn-user-delete btn btn-danger btn-sm"
+             data-user_id="<%- user.id %>" data-user_nickname="<%= user.nickname %>" data-toggle="modal" data-target="#user-delete-confirm">
+               <i class="glyphicon glyphicon-trash"></i></a>
+             </button>
+<!--            </form> -->
+	        </td>
+	      </tr>
+	    <% }) %>
+	    </tbody>
+	  </table>
+  </div>
+</div>
+
+<div id="user-delete-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Sure you want to delete <strong id="user-delete-confirm-nickname"></strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <form method="POST" class="form-horizontal">
+          <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary" id="user-delete-perform">Yup</button>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localScripts", "<script src='/dynamics/user/index.js'></script>") %>

@@ -1,0 +1,20 @@
+<%
+var args = _.extend({
+  id        : "rank-selector",
+  name      : "guildRank",
+  ranks     : Player.ranks,
+  value     : null,
+  noneOpt   : "Select rank..."
+}, data || {});
+%>
+
+<select id="<%- args.id %>" name="<%- args.name %>">
+  <% if (_.isString(args.noneOpt)) { %>
+    <option value=null <% if (args.value == null) { %> selected="selected" <% } %>><%- args.noneOpt %></option>
+  <% } %>
+  <% _.each(args.ranks, function(rank, key){ %>
+    <option value="<%- key %>" <% if (key == args.value){ %> selected="selected" <% } %>>
+      <%- rank.name %>
+    </option>
+  <% }) %>
+</select>

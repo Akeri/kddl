@@ -1,0 +1,154 @@
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="/armor">Armor</a></li>
+  <li class="active">New</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<form role="form" method="POST" action="/armor/create">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4>Add armor</h4>
+    </div>
+    <div class="panel-body">
+	    <div class="form-group">
+	      <label for="armor-name">Name</label>
+	      <input name="name" type="text" class="form-control" id="armor-name" placeholder="Enter name">
+	    </div>
+	    <div class="form-group">
+	      <label for="armor-rarity">Rarity</label><br />
+	      <select name="role" id="armor-rarity" style="width:100%;">
+	        <% _.each(Armor.rarities, function(rarity, key){ %>
+	          <option data-maxlevel="<%- rarity.maxLevel %>" value="<%- key %>" <% if (key == "legendary"){ %> selected="selected" <% } %>>
+	            <%- rarity.name.charAt(0).toUpperCase() + rarity.name.slice(1) %>
+	          </option>
+	        <% }) %>
+	      </select>
+	    </div>
+	    <div class="form-group">
+	      <p>Elements</p>
+	      <% _.each(sails.services.elements.elements, function(element, key){ %>
+	        <div style="display:inline-block;">
+	          <input name="elements" type="checkbox" value="<%- key %>" id="armor-element-<%- key %>" />
+	          <label for="armor-element-<%- key %>" style="margin-right:10px;">
+	            <%- element.icon + " " + (element.name.charAt(0).toUpperCase() + element.name.slice(1)) %>
+            </label>
+          </div>
+	      <% }) %>
+	    </div>
+	    <div class="form-group">
+	      <label for="armor-maxlevel">Max level</label>
+	      <input name="maxLevel" type="number" class="form-control" id="armor-maxlevel" placeholder="Usually got from rarity">
+	    </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4>Regular stats</h4>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <p>Level 1 stats</p>
+	      <div class="form-group col-xs-6">
+	        <div class="input-group">
+		        <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+		        <input name="regBaseAtt" type="number" class="form-control" id="armor-reg-base-att" placeholder="Att">
+	        </div>
+	      </div>
+	      <div class="form-group col-xs-6">
+	        <div class="input-group">
+		        <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+		        <input name="regBaseDef" type="number" class="form-control" id="armor-reg-base-def" placeholder="Def">
+		      </div>
+	      </div>
+      </div>
+      <div class="row">
+        <p>Max level</p>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+            <input name="regMaxAtt" type="number" class="form-control" id="armor-reg-max-att" placeholder="Att">
+          </div>
+        </div>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+            <input name="regMaxDef" type="number" class="form-control" id="armor-reg-max-def" placeholder="Def">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <p>Increment by level</p>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+            <input name="regAttStep" type="number" class="form-control" id="armor-reg-att-step" placeholder="+ Att">
+          </div>
+        </div>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+            <input name="regDefStep" type="number" class="form-control" id="armor-reg-def-step" placeholder="+ Def">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4>Plus stats</h4>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <p>Level 1 stats</p>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+            <input name="plusBaseAtt" type="number" class="form-control" id="armor-plus-base-att" placeholder="Att">
+          </div>
+        </div>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+            <input name="plusBaseDef" type="number" class="form-control" id="armor-plus-base-def" placeholder="Def">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <p>Max level</p>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+            <input name="plusMaxAtt" type="number" class="form-control" id="armor-plus-max-att" placeholder="Att">
+          </div>
+        </div>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+            <input name="plusMaxDef" type="number" class="form-control" id="armor-plus-max-def" placeholder="Def">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <p>Increment by level</p>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-flash"></span></span>
+            <input name="plusAttStep" type="number" class="form-control" id="armor-plus-att-step" placeholder="+ Att">
+          </div>
+        </div>
+        <div class="form-group col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-tower"></span></span>
+            <input name="plusDefStep" type="number" class="form-control" id="armor-plus-def-step" placeholder="+ Def">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+  <button type="submit" class="btn btn-success" style="width:100%;">Submit</button>
+</form>
+
+<% block("localScripts", "<script src='/dynamics/armor/new.js'></script>") %>
