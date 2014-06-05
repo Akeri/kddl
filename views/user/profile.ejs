@@ -146,7 +146,7 @@
 		<div class="col-lg-12">
 		  <ul class="nav nav-tabs bg-default">
 		    <% _.each(user.players, function(player){ %>
-		      <li <% if (player.id == mainPlayerId){ %> class="active" <% } %>><a href="#<%= player.id %>" data-toggle="tab">
+		      <li <% if (player.id == mainPlayerId){ %> class="active" <% } %>><a href="#<%= player.id %>" data-toggle="tab" class="player-tab">
 		        <% if (player.main === true){ %>
 		          <span title="Main player" class="glyphicon glyphicon-star"></span>
 	          <% } %>
@@ -197,22 +197,31 @@
 			          </blockquote>
 			        <% } %>
 			        
-			        <% if (!player.armors.length){ %>
-					      <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
-					    <% }else{ %>
-					      <div>
-					      <% _.each(player.armors, function(armor){ %>
-					        <div style="display:inline-block;cursor:pointer;">
-					          <a href="/armor/show/<%- armor.armorId %>">
-						        <%- partial("../components/player-armor-card.ejs", {data : {
-						          playerArmor : armor,
-						          armor       : armors[armor.armorId]
-						        }}) %>
-						        </a>
-					        </div>
-					      <% }) %>
-					      </div>
-					    <% } %>
+			        <% if (player.armors.length){ %>
+				        <div class="btn-group pull-right">
+							    <a href="/user/profile/<%- user.id %>?avm=mosaic" class="btn btn-default <% if (armorsView != 'table'){ %>active<% } %>">
+							      <span title="View as mosaic" class="glyphicon glyphicon-th"></span>
+						      </a>
+							    <a href="/user/profile/<%- user.id %>?avm=table" class="btn btn-default <% if (armorsView == 'table'){ %>active<% } %>">
+							      <span title="View as table" class="glyphicon glyphicon-th-list"></span>
+						      </a>
+								</div>
+							<% } %>
+			        
+              <%
+              var armorsTmpl = (function(mode){
+                switch(mode){
+                  case "table" : return "../player/armors_table.ejs"
+                  default      : return "../player/armors_mosaic.ejs";
+                }
+              })(armorsView);
+              %>
+              
+              <div style="margin-top:30px;">
+	              <%- partial(armorsTmpl, {data : {
+	                player : player
+	              }}) %>
+              </div>
 			        
 			        <% if (isSelfProfile || canEditUser){ %>
 			          <hr />
@@ -263,6 +272,6 @@
 </div><!-- /.modal -->
 
 <% block("localScripts", "<script src='/lib/moment/moment.min.js'></script>") %>
-<% block("localScripts", "<script src='/lib/moment/moment-timezone.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment-timezone.js'></script>") %>
 <% block("localScripts", "<script src='/lib/moment/moment-timezone-data.js'></script>") %>
 <% block("localScripts", "<script src='/dynamics/user/profile.js'></script>") %>

@@ -1,6 +1,7 @@
 <%
 var args = _.extend({
   id        : "rarity-selector",
+  className : "",
   rarities  : Armor.rarities,
   value     : null,
   noneOpt   : "Select rarity...",
@@ -8,7 +9,7 @@ var args = _.extend({
 }, data || {});
 %>
 
-<select id="<%- args.id %>" <% if (args.multiple){ %>multiple title="<%- args.noneTitle || args.noneOpt %>"<% } %>>
+<select id="<%- args.id %>" <% if (args.multiple){ %>multiple title="<%- args.noneTitle || args.noneOpt %>"<% } %> class="<%- args.className %>">
   <% if (!args.multiple && _.isString(args.noneOpt)) { %>
     <option value=null <% if (args.value == null) { %> selected="selected" <% } %>><%- args.noneOpt %></option>
   <% } %>

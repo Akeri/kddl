@@ -1,0 +1,91 @@
+<%
+var args = _.extend({
+  player : null
+}, data || {});
+
+var player = args.player;
+%>
+
+<% if (!player.armors.length){ %>
+  <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
+<% }else{ %>
+  
+  <div class="row armor-filter-case" data-table_target="#player-armors-table-<%- player.id %>" style="margin-top:60px;">
+    <div class="armor-name-filter-case col-xs-12 col-sm-4">
+      <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="text" class="armor-name-filter form-control" placeholder="Search by name">
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <%- partial("../components/rarity-selector.ejs", {data : {
+        id        : "",
+        className : "armor-rarity-filter",
+        rarities  : _.omit(Armor.rarities, "nemesis"),
+        noneOpt   : "Filter by rarity..."
+      }}) %>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <%- partial("../components/element-selector.ejs", {data : {
+        id        : "",
+        className : "armor-element-filter"
+      }}) %>
+    </div>
+  </div>
+  <table id="player-armors-table-<%- player.id %>" class="armor-table footable table table-hover toggle-square-filled" data-page-size="10">
+    <thead>
+      <tr>
+        <th data-sort-ignore="true" style="width:60px;">&nbsp;</th>
+        <th data-name="name" data-sort-initial="true">Name</th>
+        <th data-name="level">Level</th>
+        <th data-name="elements" data-hide="phone" style="text-align:center;">Elem</th>
+        <th data-name="rarity" data-hide="phone">Rarity</th>
+        <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Att</th>
+        <th data-hide="phone,tablet" data-type="numeric" class="armor-stat-column">Def</th>
+<!--           <th data-sort-ignore="true">&nbsp;</th> -->
+      </tr>
+    </thead>
+    <tbody>
+    <% _.each(player.armors, function(playerArmor){
+      var armor = playerArmor.armor;
+    %>
+      <tr data-id="<%= armor.id %>" data-model="armor">
+        <td style="white-space:nowrap;">
+          <img src="<%= armor.mainPic || armor.secondaryPic || Armor.defaultPic %>" style="width:auto;height:40px;" />
+        </td>
+        <td><a href="/armor/show/<%- armor.id   %>"><%= armor.name %></a></td>
+        <td><%- playerArmor.level %></td>
+        <td data-value="<%- armor.elements && armor.elements.length ? armor.elements.join(',') : '' %>" style="text-align:center;">
+          <%- Armor.getElemIcons(armor.elements) %>
+        </td>
+        <td data-value="<%- armor.rarity %>"><%= (function(){
+          if (!armor.rarity) return "";
+          var rarity = Armor.rarities[armor.rarity].name;
+          return rarity.charAt(0).toUpperCase() + rarity.slice(1)
+        })() %></td>
+        <td><%= armor.regMaxAtt %></td>
+        <td><%= armor.regMaxDef %></td>
+<!--           <td>Opts</td> -->
+      </tr>
+    <% }) %>
+      <tfoot>
+        <tr>
+          <td colspan="7" class="text-center">
+            <ul class="pagination pagination-centered hide-if-no-paging"></ul>
+          </td>
+        </tr>
+      </tfoot>
+    </tbody>
+  </table>
+
+<% } %>
+
+<% block("localCSS", "<link rel='stylesheet' href='/lib/footable/footable-core.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+
+<% block("localScripts", "<script src='/lib/footable/footable.core.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.filter.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.paginate.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.sort.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/armor/table.js'></script>") %>

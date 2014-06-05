@@ -1,13 +1,14 @@
 <%
 var args = _.extend({
   id        : "element-selector",
+  className : "",
   elements  : sails.services.elements.elements,
   value     : [],
   noneTitle : "Filter by element..."
 }, data || {});
 %>
 
-<select id="<%- args.id %>" multiple title="<%- args.noneTitle %>">
+<select id="<%- args.id %>" multiple title="<%- args.noneTitle %>" class="<%- args.className %>">
   <% _.each(args.elements, function(elem, key){ %>
     <option value="<%- key %>">
       <%- elem.icon + " " + elem.name.charAt(0).toUpperCase() + elem.name.slice(1) %>

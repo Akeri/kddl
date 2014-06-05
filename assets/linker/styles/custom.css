@@ -118,6 +118,12 @@ table a, .table a {
   display:inline-block;
   margin:2px 2px 12px;
 }
+.player-armor-card .elements {
+  position:absolute;
+  left:4px;
+  top:4px;
+  background-color:rgba(255,255,255,.5);
+}
 .player-armor-card .label-plus {
 	position:absolute;
 	right:4px;
@@ -155,8 +161,13 @@ table a, .table a {
 }
 @media screen and (max-width: 768px){
 	.player-armor-card {
-	  width:80px;
-	  height:80px;
+	  margin-bottom:18px;
+	  width:75px;
+	  height:75px;
+	}
+	.player-armor-card .elements {
+	  left:2px;
+	  top:2px;
 	}
 	.player-armor-card .label-plus {
 	  position:absolute;
@@ -169,4 +180,38 @@ table a, .table a {
 	.player-armor-card-name {
 	  display:none;
 	}
+}
+.row.armor-filter-case > div {
+  padding:0;
+}
+.armor-table.table > tbody > tr > td,
+.armor-table.table > tbody > tr > td .footable-toggle {
+  vertical-align:middle;
+}
+.row.armor-filter-case {
+  margin-bottom:10px;
+}
+.row.armor-filter-case > div {
+  padding-left:10px;
+}
+.row.armor-filter-case > div:first-child {
+  padding-left:0;
+}
+.row.armor-filter-case select {
+  line-height:36px;
+}
+.row.armor-filter-case .bootstrap-select.btn-group:not(.input-group-btn) {
+  margin-bottom:0;
+}
+@media screen and (max-width: 768px) {
+  .row.armor-filter-case > div {
+    margin-top:10px;
+    padding-left:0;
+  }
+  .row.armor-filter-case > div:first-child {
+    margin-top:0;
+  }
+}
+.row.armor-table .armor-stat-column {
+  width:65px;
 }

@@ -1,0 +1,48 @@
+<%
+var args = _.extend({
+  player : null
+}, data || {});
+
+var player = args.player;
+%>
+
+<% if (!player.armors.length){ %>
+  <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
+<% }else{ 
+    var playerArmors = _.groupBy(player.armors, function(playerArmor){
+      return playerArmor.armor.rarity;
+    });
+  %>
+  <div>
+  <%
+  var raritySorting = ["epic", "legendary", "ultrarare", "superrare", "rare", "uncommon", "common"];
+  _.each(raritySorting, function(rarityKey){ 
+    var rarityArmors = playerArmors[rarityKey];
+    if (_.isEmpty(rarityArmors)) return;
+    var rarityName = Armor.rarities[rarityKey].name; %>
+    <h4 style="border-bottom:solid 1px #e7e7e7;padding:4px 10px;margin:20px 0;">
+      <span style="vertical-align:middle;">
+        <%- rarityName.charAt(0).toUpperCase() + rarityName.slice(1) %>
+      </span>
+      <span class="badge _pull-right" style="vertical-align:middle;background-color:#999999;">
+        <%- _.size(rarityArmors) %>
+      </span>
+    </h4>
+  
+    <% 
+    sortedArmors = rarityArmors.sort(function(a, b){
+      if (a.level != b.level) return b.level - a.level;
+      return b.armor.name < a.armor.name;
+    });
+    _.each(rarityArmors, function(playerArmor){ %>
+	    <div style="display:inline-block;cursor:pointer;">
+	      <a href="/armor/show/<%- playerArmor.armorId %>">
+	      <%- partial("../components/player-armor-card.ejs", {data : {
+	        playerArmor : playerArmor
+	      }}) %>
+	      </a>
+	    </div>
+	  <% }) %>
+  <% }) %>
+  </div>
+<% } %>

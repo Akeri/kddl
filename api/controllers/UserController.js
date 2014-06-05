@@ -62,11 +62,11 @@ module.exports = {
         .sort({main : "desc", name : "asc"})
         .exec(function foundPlayers(err, players){
           if (err) return next(err);
-          var end = function(mapArmors){
-            user.players = players;
+          user.players = players;
+          var end = function(){
             res.view({
-              user   : user,
-              armors : mapArmors || null
+              user       : user,
+              armorsView : req.param("avm")
             });
           };
           if (!players.length) return end();
@@ -75,35 +75,11 @@ module.exports = {
             player.armors = [];
             if (player.guildId != null) guildIds.push(player.guildId);
           });
-          Guild.find()
-            .where({ id : _.uniq(guildIds) })
-            .exec(function(err, guilds){
-              if (err) return next(err);
-              if (guilds.length){
-                var mapGuilds = _.indexBy(guilds, "id");
-                _.each(players, function(player){
-                  player.guild = mapGuilds[player.guildId] || null;
-                });
-              }
-              Player.completeWithArmors(players, function foundPlayerArmors(err){
-                if (err) return next(err);
-                var armorIds = [];
-                _.each(players, function(player){
-                  _.each(player.armors, function(playerArmor){
-                    armorIds.push(playerArmor.armorId);
-                  });
-                });
-                Armor.find({id : armorIds})
-                  .then(function foundArmors(armors){
-                    if (err) return next(err);
-                    var mapArmors = _.indexBy(armors, "id");
-                    end(mapArmors);
-                  })
-                  .fail(function failed(err){
-                    return next(err);
-                  });
-              });
-            });
+          var mapPlayers = _.indexBy(players, "id");
+          Player.completeWithAll(mapPlayers, function gotIt(err){
+            if (err) return next(err);
+            return end();
+          });
       });
     });
   },

@@ -78,21 +78,74 @@ module.exports = {
     
   },
   
-  completeWithArmors : function(players, next){
-    var mapPlayers = _.indexBy(players, "id");
+  completeWithArmors : function(mapPlayers, next){
+    _.each(mapPlayers, function(player){
+      player.armors = [];
+    });
     PlayerArmor.find({playerId : Object.keys(mapPlayers), fused : null})
       .sort("level desc")
       .then(function(armors){
         _.each(armors, function(armor){
           var player = mapPlayers[armor.playerId];
-          if (!player.armors) player.armors = [];
           player.armors.push(armor);
         });
-        return next();
+        return next(undefined, armors);
       })
       .fail(function(err){
         return next(err);
       });
+  },
+  
+  completeWithDetailedArmors : function(mapPlayers, next){
+    Player.completeWithArmors(mapPlayers, function foundPlayerArmors(err, playerArmors){
+      if (err) return next(err);
+      var armorIds = _.map(playerArmors, function(playerArmor){ return playerArmor.armorId; });
+      Armor.find({id : armorIds})
+        .then(function foundArmors(armors){
+          if (err) return next(err);
+          _.each(armors, function(armor){
+            var matchedPlayerArmors = _.filter(playerArmors, function(playerArmor){
+              return playerArmor.armorId == armor.id;
+            });
+            _.each(matchedPlayerArmors, function(playerArmor){
+              playerArmor.armor = armor;
+            });
+          });
+          next();
+        })
+        .fail(function failed(err){
+          return next(err);
+        });
+    });
+  },
+  
+  completeWithGuild : function(mapPlayers, next){
+    var guildIds = [];
+    _.each(mapPlayers, function(player){
+      if (player.guildId != null) guildIds.push(player.guildId);
+    });
+    Guild.find()
+      .where({ id : _.uniq(guildIds) })
+      .exec(function(err, guilds){
+        if (err) return next(err);
+        if (guilds.length){
+          var mapGuilds = _.indexBy(guilds, "id");
+          _.each(mapPlayers, function(player){
+            player.guild = mapGuilds[player.guildId] || null;
+          });
+        }
+        next();
+      });
+  },
+  
+  completeWithAll : function(mapPlayers, next){
+    Player.completeWithGuild(mapPlayers, function(err){
+      if (err) return next(err);
+      Player.completeWithDetailedArmors(mapPlayers, function(err){
+        if (err) return next(err);
+        next();
+      });
+    });
   },
   
   beforeValidation : function(values, next){

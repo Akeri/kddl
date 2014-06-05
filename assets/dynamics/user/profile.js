@@ -1,9 +1,18 @@
 (function(){
   
-  // Render user actual time
   var timezone = $("#user-timezone").text();
-  var actualTime = moment.tz(timezone).format("ddd, HH:mm");
-  $("#user-actual-time").text(actualTime);
+  
+  // Render time
+  function renderTime(){
+    var actualTime = moment().tz(timezone);
+    $("#user-actual-time").text(actualTime.format("ddd, HH:mm ") + actualTime.zoneAbbr());
+  }
+  
+  // Render user actual time
+  if (timezone != ""){
+    renderTime();
+    setInterval(renderTime, 1000); // Update time every 1000ms
+  }
   
   // Render actual parameters on player delete confirm
   $(document).on("click", ".btn-player-delete", function(){
