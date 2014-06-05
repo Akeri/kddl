@@ -1,6 +1,7 @@
 <%
 var args = _.extend({
-  player : null
+  player  : null,
+  card    : ""
 }, data || {});
 
 var player = args.player;
@@ -36,7 +37,7 @@ var player = args.player;
     });
     _.each(rarityArmors, function(playerArmor){ %>
 	    <div style="display:inline-block;cursor:pointer;">
-	      <a href="/armor/show/<%- playerArmor.armorId %>">
+	      <a <%- args.card(playerArmor) %>>
 	      <%- partial("../components/player-armor-card.ejs", {data : {
 	        playerArmor : playerArmor
 	      }}) %>

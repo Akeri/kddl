@@ -1,0 +1,35 @@
+<%
+var args = _.extend({
+  player  : null,
+  mode    : "basic",
+  baseUri : "",
+  card    : ""
+}, data || {});
+%>
+
+<% if (args.player.armors.length){ %>
+  <div class="btn-group pull-right">
+    <a href="<%- args.baseUri %>?avm=mosaic" class="btn btn-default <% if (args.mode != 'table'){ %>active<% } %>">
+      <span title="View as mosaic" class="glyphicon glyphicon-th"></span>
+    </a>
+    <a href="<%- args.baseUri %>?avm=table" class="btn btn-default <% if (args.mode == 'table'){ %>active<% } %>">
+      <span title="View as table" class="glyphicon glyphicon-th-list"></span>
+    </a>
+  </div>
+<% } %>
+
+<%
+var armorsTmpl = (function(mode){
+  switch(mode){
+    case "table" : return "../player/armors_table.ejs"
+    default      : return "../player/armors_mosaic.ejs";
+  }
+})(args.mode);
+%>
+
+<div style="margin-top:30px;">
+  <%- partial(armorsTmpl, {data : {
+    player : args.player,
+    card   : args.card
+  }}) %>
+</div>

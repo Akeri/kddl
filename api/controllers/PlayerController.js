@@ -142,18 +142,22 @@ module.exports = {
       var userId = req.param("userId");
       User.findOne(userId, function foundUser(err, user){
         if (err) return next(err);
-        player.armors = [];
-        Player.completeWithArmors([player], function foundPlayerArmors(err){
+        var mapPlayers = _.indexBy([player], "id");
+        Player.completeWithArmors(mapPlayers, function foundPlayerArmors(err){
           if (err) return next(err);
           Armor.find()
             .sort("name")
             .then(function foundArmors(armors){
               if (err) return next(err);
               var mapArmors = _.indexBy(armors, "id");
+              _.each(player.armors, function(playerArmor){
+                playerArmor.armor = mapArmors[playerArmor.armorId];
+              });
               res.view("player/edit_armors.ejs", {
-                user    : user,
-                player  : player,
-                armors  : mapArmors
+                user       : user,
+                player     : player,
+                armors     : armors,
+                armorsView : req.param("avm")
               });
             })
             .fail(function failed(err){

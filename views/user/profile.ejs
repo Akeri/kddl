@@ -197,31 +197,13 @@
 			          </blockquote>
 			        <% } %>
 			        
-			        <% if (player.armors.length){ %>
-				        <div class="btn-group pull-right">
-							    <a href="/user/profile/<%- user.id %>?avm=mosaic" class="btn btn-default <% if (armorsView != 'table'){ %>active<% } %>">
-							      <span title="View as mosaic" class="glyphicon glyphicon-th"></span>
-						      </a>
-							    <a href="/user/profile/<%- user.id %>?avm=table" class="btn btn-default <% if (armorsView == 'table'){ %>active<% } %>">
-							      <span title="View as table" class="glyphicon glyphicon-th-list"></span>
-						      </a>
-								</div>
-							<% } %>
-			        
-              <%
-              var armorsTmpl = (function(mode){
-                switch(mode){
-                  case "table" : return "../player/armors_table.ejs"
-                  default      : return "../player/armors_mosaic.ejs";
-                }
-              })(armorsView);
-              %>
-              
-              <div style="margin-top:30px;">
-	              <%- partial(armorsTmpl, {data : {
-	                player : player
-	              }}) %>
-              </div>
+			        <%- partial("../player/armors.ejs", {data : {
+						    player : player,
+						    mode   : armorsView,
+						    card   : function(playerArmor){
+						      return "href='/armor/show/" + playerArmor.armor.id + "'";
+						    }
+						  }}) %>
 			        
 			        <% if (isSelfProfile || canEditUser){ %>
 			          <hr />

@@ -48,25 +48,18 @@
     <h4>Armors of player <span class="text-primary"><%= player.name %></span></h4>
   </div>
   <div class="panel-body" style="padding:5px;">
-    <% if (!player.armors.length){ %>
-      <p class="lead" style="padding:10px 0 0 10px;">Still no armors</p>
-    <% }else{ %>
-      <div>
-      <% _.each(player.armors, function(armor){ %>
-        <div class="trigger-player-armor-add-dialog" style="display:inline-block;cursor:pointer;"
-        data-user_id="<%- user.id %>" data-player_id="<%- player.id %>"
-        data-player_armor = "<%- _.escape(JSON.stringify(armor)) %>"
-        data-armor="<%- _.escape(JSON.stringify(armors[armor.armorId])) %>"
-        data-toggle="modal" data-target="#player-armor-add-dialog">
-        <%- partial("../components/player-armor-card.ejs", {data : {
-          playerArmor : armor,
-          armor       : armors[armor.armorId],
-          className   : "_col-xs-3"
-        }}) %>
-        </div>
-      <% }) %>
-      </div>
-    <% } %>
+    <%- partial("../player/armors.ejs", {data : {
+      player : player,
+      mode   : armorsView,
+      card   : function(playerArmor){
+        var attr =
+          "class='trigger-player-armor-add-dialog' " +
+          "data-user_id='" + user.id + "' data-player_id='" + player.id + "' " +
+          "data-player_armor='" + JSON.stringify(playerArmor) + "' " +
+          "data-toggle='modal' data-target='#player-armor-add-dialog'";
+        return attr;
+       }
+    }}) %>
   </div>
 </div>
 
@@ -122,7 +115,7 @@
               <%= armor.name %>
             </a>
           </td>
-          <td data-value="<%- armor.elements.join(',') %>" style="text-align:center;">
+          <td data-value="<%- (armor.elements || []).join(',') %>" style="text-align:center;">
             <%- Armor.getElemIcons(armor.elements) %>
           </td>
           <td data-value="<%- armor.rarity %>"><%= (function(){

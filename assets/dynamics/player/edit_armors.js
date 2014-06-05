@@ -85,10 +85,10 @@
     var userId = $(this).data("user_id");
     var playerId = $(this).data("player_id");
     var playerArmor = $(this).data("player_armor");
-    var armor = $(this).data("armor");
     var $dialog = $("#player-armor-add-dialog");
-    $dialog.find("#player-armor-add-name").text(armor.name);
+    var armor;
     if (playerArmor){
+      armor = playerArmor.armor;
       $dialog.find(".player-armor-add-id").val(playerArmor.id);
       $dialog.find("form#delete-owned-armor").attr("action", "/user/" + userId + "/player/" + playerId + "/armor/destroy/" + playerArmor.id);
       $dialog.find("form#fuse-owned-armor").attr("action", "/user/" + userId + "/player/" + playerId + "/armor/fuse/" + playerArmor.id);
@@ -96,11 +96,13 @@
       $dialog.find("button.btn-owned-armor").show();
       $dialog.find("button.btn-new-armor").text("Update");
     }else{
+      armor = $(this).data("armor");
       $dialog.find(".player-armor-add-id").removeAttr("value");
       $dialog.find("form#own-new-armor").attr("action", "/user/" + userId + "/player/" + playerId + "/armor/create");
       $dialog.find("button.btn-owned-armor").hide();
       $dialog.find("button.btn-new-armor").text("Submit");
     }
+    $dialog.find("#player-armor-add-name").text(armor.name);
     $dialog.find("#player-armor-add-armor-id").val(armor.id);
     $dialog.find(".player-armor-add-thumb").attr("src", armor.mainPic || armor.secondaryPic || armor.defaultPic);
     var $level = $dialog.find("#player-armor-add-level").attr("max", armor.maxLevel)
