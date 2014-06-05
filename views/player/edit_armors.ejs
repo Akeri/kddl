@@ -119,8 +119,10 @@
             <%- Armor.getElemIcons(armor.elements) %>
           </td>
           <td data-value="<%- armor.rarity %>"><%= (function(){
-            var rarity = Armor.rarities[armor.rarity].name;
-            return rarity.charAt(0).toUpperCase() + rarity.slice(1)
+            var rarity = Armor.rarities[armor.rarity];
+            if (!rarity) return "unkn";
+            var rarityName = rarity.name;
+            return rarityName.charAt(0).toUpperCase() + rarityName.slice(1);
           })() %></td>
           <td><%= armor.regMaxAtt %></td>
           <td><%= armor.regMaxDef %></td>
