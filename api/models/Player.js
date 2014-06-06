@@ -14,19 +14,24 @@ module.exports = {
     
   ranks : {
     commander : {
-      name    : "Commander"
+      name    : "Commander",
+      bonus   : 0
     },
     highcommander : {
-      name    : "High Commander"
+      name    : "High Commander",
+      bonus   : 5
     },
     champion : {
-      name    : "Guild Champion"
+      name    : "Guild Champion",
+      bonus   : 7
     },
     sentinel : {
-      name    : "Guild Sentinel"
+      name    : "Guild Sentinel",
+      bonus   : 7
     },
     guildmaster : {
-      name    : "Guild Master"
+      name    : "Guild Master",
+      bonus   : 10
     }
   },
   
@@ -128,7 +133,12 @@ module.exports = {
     _.each(mapPlayers, function(player){
       var power = {
         groups  : [],
-        score   : 0
+        base    : 0,
+        score   : 0,
+        bonus   : {
+          pctg  : 0,
+          score : 0
+        }
       };
       player.power = power;
       var armors = _.groupBy(player.armors, function(playerArmor){ // Group by elements combo
@@ -154,8 +164,15 @@ module.exports = {
         _.each(groupArmors, function(playerArmor){
           group.score += playerArmor.power;
         });
-        power.score += group.score;
+        power.base += group.score;
       });
+      if (player.guildRank != null){
+        power.bonus.pctg = Player.ranks[player.guildRank].bonus;
+        power.bonus.score = power.base * (power.bonus.pctg / 100);
+        power.score = power.base + power.bonus.score;
+      }else{
+        power.score = power.base;
+      };
     });
     next();
   },
@@ -173,6 +190,28 @@ module.exports = {
           var mapGuilds = _.indexBy(guilds, "id");
           _.each(mapPlayers, function(player){
             player.guild = mapGuilds[player.guildId] || null;
+          });
+        }
+        next();
+      });
+  },
+  
+  completeWithUser : function(mapPlayers, next){
+    var userIds = [];
+    _.each(mapPlayers, function(player){
+      if (player.userId != null) userIds.push(player.userId);
+    });
+    User.find()
+      .where({ id : _.uniq(userIds) })
+      .exec(function(err, users){
+        if (err) return next(err);
+        if (users.length){
+          _.each(users, function(user){
+            delete user.encryptedPassword;
+          });
+          var mapUsers = _.indexBy(users, "id");
+          _.each(mapPlayers, function(player){
+            player.user = mapUsers[player.userId] || null;
           });
         }
         next();

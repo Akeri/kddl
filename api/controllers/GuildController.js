@@ -17,14 +17,40 @@
 
 module.exports = {
     
-  
-
-
-  /**
-   * Overrides for the settings in `config/controllers.js`
-   * (specific to GuildController)
-   */
-  _config: {}
-
+ // Render the guild view
+  show : function(req, res, next){
+    var end = function(guild){
+      res.view({
+        guild : guild
+      });
+    };
+    var guildId = req.param("id");
+    Guild.findOne(guildId, function foundGuild(err, guild){
+      if (err) return next(err);
+      if (!guild){
+        req.session.flash = {
+          err : [{ message : "Guild not found" }]
+        };
+        return res.redirect("/");
+      }
+      Player.find({guildId : guildId})
+        .exec(function foundPlayers(err, players){
+          if (err) return next(err);
+          guild.players = players;
+          if (!players.length) return end(guild);
+          var mapPlayers = _.indexBy(players, "id");
+          Player.completeWithDetailedArmors(mapPlayers, function(err){
+            if (err) return next(err);
+            Player.completeWithPower(mapPlayers, function(err){
+              if (err) return next(err);
+              Player.completeWithUser(mapPlayers, function(err){
+                if (err) return next(err);
+                end(guild);
+              });
+            });
+          });
+      });
+    });
+  },
   
 };

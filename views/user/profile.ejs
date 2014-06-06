@@ -201,7 +201,7 @@
 			              <div style="display:inline-block;margin:0 0 5x 0;">
 			                <i title="Power measure" class="fa fa-shield"></i>
 			                <span>Power:</span>
-			                <span class="text-success"><strong><%- player.power.score %></strong></span>
+			                <span class="text-success"><strong><%- Math.round(player.power.score) %></strong></span>
 			                <a href="#" class="btn-player-power-breakdown" data-toggle="modal" data-target="#player-power-breakdown"
                       data-player_name="<%= player.name %>" data-player_power="<%- _.escape(JSON.stringify(player.power)) %>">
 			                  (breakdown)
@@ -289,7 +289,7 @@
       </div>
       <div class="modal-body">
         <h4 class="text-primary" id="player-power-breakdown-name"></h4>
-        <p>The power measure of a player is calculated by adding attack and defense of his armor.</p>
+        <p>The power measure of a player is calculated by adding attack and defense of his armors.</p>
         <p>Note that only the 3 strongest armors of every different combo of elements will be taken into account.</p>
         <div>
 	        <table class="table">
@@ -304,7 +304,10 @@
 	          <tfoot>
 	            <tr>
 	              <td colspan="3">
-	                <h4>Total Power = <strong id="player-power-breakdown-total">0</strong></h4>
+                  <span>Total Power:</span>
+                  <span id="player-power-breakdown-base">0</span> +
+                  <span id="player-power-breakdown-pctg">0</span>% =<br />
+                  <h4><strong id="player-power-breakdown-total">0</strong></h4>
                 </td>
 	            </tr>
 	          </tfoot>

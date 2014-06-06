@@ -27,10 +27,11 @@
   $(document).on("click", ".btn-player-power-breakdown", function(){
     var playerName = $(this).data("player_name");
     var power = $(this).data("player_power");
-    console.log(power);
     $dialog = $("#player-power-breakdown");
     $dialog.find("#player-power-breakdown-name").text(playerName);
-    $dialog.find("#player-power-breakdown-total").text(power.score);
+    $dialog.find("#player-power-breakdown-base").text(power.base);
+    $dialog.find("#player-power-breakdown-pctg").text(power.bonus.pctg);
+    $dialog.find("#player-power-breakdown-total").text(Math.round(power.score));
     power.groups.sort(function(a, b){
       return b.score - a.score;
     });

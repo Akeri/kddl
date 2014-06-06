@@ -78,13 +78,14 @@ module.exports = {
           });
         });
         // redirect to their profile page
-        res.redirect("/user/profile/" + user.id);
+//        res.redirect("/user/profile/" + user.id);
 //        res.redirect("/user/profile/" + user.id + "/edit");
 //        res.redirect("/user/profile/" + user.id);
 //        res.redirect("/armor/crawler");
 //        res.redirect("/user/profile/" + user.id + "/edit/#user-players");
 //        res.redirect("/user/" + user.id + "/player/new");
 //        res.redirect("/user");
+        res.redirect("/guild/show/" + sails.config.kddl.mainGuildId);
       });
     });
   },

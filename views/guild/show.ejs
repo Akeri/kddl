@@ -1,0 +1,167 @@
+<style>
+  #guild-show .panel-body h4 {
+    padding:4px 6px;
+    border-bottom:solid 1px #e7e7e7;
+  }
+  #guild-show .panel-body h4 > span {
+    vertical-align:middle;
+    margin-right:5px;
+  }
+  .flag {
+    display:inline-block;
+    margin-left:2px;
+    vertical-align:middle;
+  }
+  .user-avatar-thumb {
+    width:auto;
+    height:45px;
+  }
+  .user-avatar-thumb + .glyphicon-user {
+    float:left;
+  }
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li>Guild</li>
+  <li class="active"><%= guild.name %></li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div id="guild-show" class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+      <span class="glyphicon glyphicon-flag"></span>
+      <%= guild.name %>
+    </h4>
+  </div>
+  <div class="panel-body">
+    
+    <% if (guild.description && guild.description.length){ %>
+      <p><%= guild.description %></p>
+    <% }else{ %>
+      <p><i>No description</i></p>
+    <% } %>
+    
+    <% if (!guild.players.length){ %>
+      <p><i>No players</i></p>
+    <% }else{ %>
+	    <h4>
+	      <span>Players</span>
+	      <span class="badge"><%- guild.players.length %></span>
+	    </h4>
+	    <%
+	      var countryGroups = _.groupBy(guild.players, function(player){
+	        if (!player.user || !player.user.country) return "_";
+	        return player.user.country.cca2;
+	      });
+	      var unknCountryGroup = countryGroups._;
+	      delete countryGroups._; // discard unknown country
+	      countryGroups = _.toArray(countryGroups);
+	      countryGroups.sort(function(a, b){
+	        return b.length - a.length;
+	      });
+	    %>
+	    <div style="overflow:hidden;">
+		    <div class="pull-left" style="margin-right:10px;">
+		      <strong><%- guild.players.length %></strong> players from <strong><%- countryGroups.length %></strong> different countries:
+	      </div>
+		    <div class="pull-left">
+		      <% _.each(countryGroups, function(countryGroup){
+		        var country = countryGroup[0].user.country; %>
+		        <div class="flag flag-<%- country.cca2.toLowerCase() %>" style="cursor:pointer;"
+		        title="<%- countryGroup.length %> players from <%- country.name %>"
+		        data-maketooltip data-toggle="tooltip" data-placement="top"></div>
+		      <% }) %>
+		    </div>
+	    </div>
+	    
+	    <div>
+	      <table id="players-table" class="footable table table-hover toggle-square-filled" data-page-size="10">
+		      <thead>
+		        <tr>
+		          <th data-sort-ignore="true" data-name="avatar">&nbsp;</th>
+		          <th data-name="name" data-toggle="true">Nick</th>
+		          <th data-name="online">&nbsp;</th>
+		          <th data-name="power">Power</th>
+		          <th data-name="rank" data-hide="phone">Rank</th>
+		          <th data-name="country" data-hide="phone,tablet">Country</th>
+		          <th data-name="labels" data-hide="all">Labels</th>
+		          <th data-sort-ignore="true" data-hide="phone" data-class="user-tools">Tools</th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		      <% _.each(guild.players, function(player){ %>
+		        <tr data-id="<%- player.id %>" data-model="player">
+		          <td style="width:30px;padding:5px;">
+		            <% if (player.user){ %>
+		              <img class="img-circle user-avatar-thumb <%- player.user.online ? 'online' : 'offline' %>" src="<%= User.getAvatarPath(player.user.avatar) %>">
+	              <% } %>
+		          </td>
+		          <td>
+		            <a href="/player/show/<%- player.id %>" title="View <%= player.name %>"><%= player.name %></a>
+		          </td>
+		          <td data-value="<%- player.user && player.user.online ? 'online' : 'offline' %>">
+		            <% if (player.user && player.user.online){ %>
+		              <span title="online" class="glyphicon glyphicon-user text-success"></span>
+		            <% }else{ %>
+		              <span title="offline" class="glyphicon glyphicon-user text-default"></span>
+		            <% } %>
+		          </td>
+		          <td><%- Math.round(player.power.score) %></td>
+		          <td data-value="<%- player.guildRank %>">
+		            <%- (function(){
+		              var rank = Player.ranks[player.guildRank];
+		              if (!rank) return "<i>unkn</i>";
+		              return "<span class='label label-default'>" + rank.name + "</span>";
+		            })() %>
+		          </td>
+		          <td>
+		            <% if (player.user && player.user.country){
+		              var country = player.user.country; %>
+		              <div class="flag flag-<%- country.cca2.toLowerCase() %>"></div>
+		              <span style="vertical-align:middle;"><%- country.name %></span>
+		            <% }else{ %>
+		              <i>unkn</i>
+		            <% } %>
+		          </td>
+		          <td><%
+		            if (!player.captions.length){ %>
+		              <i>none</i>
+		            <% }else{
+		              _.each(player.captions, function(caption){ %>
+		                <span class="label label-info"><%= caption %></span>
+		              <% })
+		            } %>
+		          </td>
+		          <td>
+		            &nbsp;
+		          </td>
+		        </tr>
+		      <% }) %>
+		        <tfoot style="display:none;">
+		          <tr>
+		            <td colspan="8" class="text-center">
+		              <ul class="pagination pagination-centered hide-if-no-paging"></ul>
+		            </td>
+		          </tr>
+		        </tfoot>
+		      </tbody>
+		    </table>
+	    </div>
+	    
+	  <% } %>
+    
+  </div><!-- /panel-body -->
+</div>
+
+<% block("localCSS", "<link rel='stylesheet' href='/lib/flags/flags.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/footable/footable-core.css'>") %>
+<% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
+
+<% block("localScripts", "<script src='/lib/footable/footable.core.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.filter.js'></script>") %>
+<% block("localScripts", "<script src='/lib/footable/footable.sort.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/guild/show.js'></script>") %>
