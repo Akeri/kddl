@@ -1,3 +1,5 @@
+var elements = require("../services/elements.js");
+
 /**
  * Player
  *
@@ -109,6 +111,7 @@ module.exports = {
             });
             _.each(matchedPlayerArmors, function(playerArmor){
               playerArmor.armor = armor;
+              playerArmor.power = Armor.getPower(armor, playerArmor.plus, playerArmor.level);
             });
           });
           next();
@@ -117,6 +120,44 @@ module.exports = {
           return next(err);
         });
     });
+  },
+  
+  completeWithPower : function(mapPlayers, next){
+    var combos = elements.getAllCombos();
+    combos.pop(); // Exclude starmetal combo
+    _.each(mapPlayers, function(player){
+      var power = {
+        groups  : [],
+        score   : 0
+      };
+      player.power = power;
+      var armors = _.groupBy(player.armors, function(playerArmor){ // Group by elements combo
+        var groupIndex = elements.normalize(playerArmor.armor.elements).join("-");
+        return groupIndex;
+      });
+      _.each(combos, function(combo){
+        var groupIndex = elements.normalize(combo).join("-");
+        var group = {
+          elements : combo,
+          elemUi   : Armor.getElemIcons(combo),
+          count    : 0,
+          score    : 0
+        };
+        var groupArmors = armors[groupIndex];
+        power.groups.push(group);
+        if (!groupArmors) return;
+        group.count = _.size(groupArmors);
+        groupArmors.sort(function(a, b){
+          return b.power - a.power;
+        });
+        groupArmors = groupArmors.slice(0, 3); // Only 3 armors of the same combo are useful
+        _.each(groupArmors, function(playerArmor){
+          group.score += playerArmor.power;
+        });
+        power.score += group.score;
+      });
+    });
+    next();
   },
   
   completeWithGuild : function(mapPlayers, next){
@@ -143,7 +184,10 @@ module.exports = {
       if (err) return next(err);
       Player.completeWithDetailedArmors(mapPlayers, function(err){
         if (err) return next(err);
-        next();
+        Player.completeWithPower(mapPlayers, function(err){
+          if (err) return next(err);
+          next();
+        });
       });
     });
   },

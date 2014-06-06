@@ -23,4 +23,31 @@
     $("#player-delete-confirm #player-delete-confirm-name").text(playerName);
   });
   
+  //Render actual parameters on player power breakdown
+  $(document).on("click", ".btn-player-power-breakdown", function(){
+    var playerName = $(this).data("player_name");
+    var power = $(this).data("player_power");
+    console.log(power);
+    $dialog = $("#player-power-breakdown");
+    $dialog.find("#player-power-breakdown-name").text(playerName);
+    $dialog.find("#player-power-breakdown-total").text(power.score);
+    power.groups.sort(function(a, b){
+      return b.score - a.score;
+    });
+    var $tbody = $dialog.find("table > tbody").empty();
+    $.each(power.groups, function(i, group){
+      var totalCount = group.count;
+      var count = totalCount > 3 ? 3 : totalCount;
+      var countLabel = count.toString();
+      if (count != totalCount) countLabel += " (" + totalCount + ")";
+      var tr = "" +
+		"<tr>" +
+		  "<td>" + group.elemUi + "</td>" +
+		  "<td>" + countLabel + "</td>" +
+		  "<td>" + group.score + "</td>" +
+		"</tr>";
+      $tbody.append(tr);
+    });
+  });
+  
 })();

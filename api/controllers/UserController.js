@@ -70,11 +70,6 @@ module.exports = {
             });
           };
           if (!players.length) return end();
-          var guildIds = [];
-          _.each(players, function(player){
-            player.armors = [];
-            if (player.guildId != null) guildIds.push(player.guildId);
-          });
           var mapPlayers = _.indexBy(players, "id");
           Player.completeWithAll(mapPlayers, function gotIt(err){
             if (err) return next(err);
@@ -85,7 +80,7 @@ module.exports = {
   },
   
   // render the user profile edit
-  profilEedit : function(req, res, next){
+  profileEdit : function(req, res, next){
     User.findOne(req.param("id"), function foundUser(err, user){
       if (err) return next(err);
       if (!user) return next();

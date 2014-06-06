@@ -169,6 +169,32 @@ module.exports = {
       }
     });
     return diff;
+  },
+  
+  getStats : function(armor, plus, level){
+    var baseAtt, baseDef, stepAtt, stepDef;
+    if (plus === true){
+      baseAtt = armor.plusBaseAtt;
+      baseDef = armor.plusBaseDef;
+      stepAtt = armor.plusAttStep;
+      stepDef = armor.plusDefStep;
+    }else{
+      baseAtt = armor.regBaseAtt;
+      baseDef = armor.regBaseDef;
+      stepAtt = armor.regAttStep;
+      stepDef = armor.regDefStep;
+    }
+    var att = _.isNumber(baseAtt) ? baseAtt + ((level - 1) * stepAtt) : 0;
+    var def = _.isNumber(baseDef) ? baseDef + ((level - 1) * stepDef) : 0;
+    return {
+      attack  : att,
+      defense : def
+    };
+  },
+  
+  getPower : function(armor, plus, level){
+    var stats = Armor.getStats(armor, plus, level);
+    return stats.attack + stats.defense;
   }
 
 };

@@ -47,16 +47,17 @@
   <div class="panel-heading">
     <h4>Armors of player <span class="text-primary"><%= player.name %></span></h4>
   </div>
-  <div class="panel-body" style="padding:5px;">
+  <div class="panel-body">
     <%- partial("../player/armors.ejs", {data : {
       player : player,
       mode   : armorsView,
       card   : function(playerArmor){
+      console.log(playerArmor);
         var attr =
-          "class='trigger-player-armor-add-dialog' " +
-          "data-user_id='" + user.id + "' data-player_id='" + player.id + "' " +
-          "data-player_armor='" + JSON.stringify(playerArmor) + "' " +
-          "data-toggle='modal' data-target='#player-armor-add-dialog'";
+          'class="trigger-player-armor-add-dialog" ' +
+          'data-user_id="' + user.id + '" data-player_id="' + player.id + '" ' +
+          'data-player_armor="' + _.escape(JSON.stringify(playerArmor)) + '" ' +
+          'data-toggle="modal" data-target="#player-armor-add-dialog"';
         return attr;
        }
     }}) %>

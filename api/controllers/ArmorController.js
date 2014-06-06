@@ -46,6 +46,29 @@ module.exports = {
     });
   },
   
+  destroy : function(req, res, next){
+    var armorId = req.param("id");
+    Armor.findOne({id : armorId}, function foundArmor(err, armor){
+      if (err) return next(err);
+      if (!armor){
+        req.session.flash = {
+          err : [{ message : "Armor not found" }]
+        };
+        return res.redirect("/session/new");
+      }
+      Armor.destroy(armorId, function armorDestroyed(err){
+        if (err) return next(err);
+        req.session.flash = {
+            success : [{ message : "Armor " +  armor.name + " has been deleted" }]  
+        };
+        PlayerArmor.destroy({armorId : armorId}, function(err){
+          if (err) return next(err);
+          res.redirect("/armor");
+        });
+      });
+    });
+  },
+  
   crawler : function(req, res){
     res.view();
   },

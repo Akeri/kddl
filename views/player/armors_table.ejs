@@ -54,7 +54,7 @@ var player = args.player;
         <td style="white-space:nowrap;">
           <img src="<%= armor.mainPic || armor.secondaryPic || Armor.defaultPic %>" style="width:auto;height:40px;" />
         </td>
-        <td><a <%- args.card(playerArmor) %>><%= armor.name %></a></td>
+        <td><a style="cursor:pointer;" <%- args.card(playerArmor) %>><%= armor.name %></a></td>
         <td><%- playerArmor.level %></td>
         <td data-value="<%- armor.elements && armor.elements.length ? armor.elements.join(',') : '' %>" style="text-align:center;">
           <%- Armor.getElemIcons(armor.elements) %>

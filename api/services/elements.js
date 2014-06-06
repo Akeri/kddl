@@ -52,4 +52,28 @@ elements.spirit.strongVs    = elements.earth;
 elements.spirit.weakVs      = elements.fire;
 
 
-module.exports.elements = elements;
+module.exports = {
+  elements  : elements,
+  /**
+   * Normalize elements combo
+   * @param {[string]} combo
+   * @returns {[string]}
+   */
+  normalize : function(combo){
+    return combo.sort();
+  },
+  /**
+   * Get the collection of all possible element combos
+   * @returns {[[string]]} 
+   */
+  getAllCombos : function(){
+    return [
+      ["fire"], ["water"], ["air"], ["earth"], ["spirit"],
+      ["air", "fire"], ["air", "water"], ["air", "earth"], ["air", "spirit"],
+      ["earth", "fire"], ["earth", "water"], ["earth", "spirit"],
+      ["fire", "water"], ["fire", "spirit"],
+      ["water", "spirit"],
+      ["starmetal"]
+    ];
+  }
+};

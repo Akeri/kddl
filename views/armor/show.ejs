@@ -55,6 +55,12 @@ var nullStat = "unkn";
           <h4><%= armor.name %></h4>
         </div>
         <div class="panel-body" style="text-align:center;">
+          <% if (sails.services.rolemanager.userInGroup(session.User, "admin")){ %>
+	          <button title="Delete from database" type="button" class="btn-armor-delete btn btn-primary btn-sm pull-right"
+	          data-armor_id="<%- armor.id %>" data-armor_name="<%= armor.name %>" data-toggle="modal" data-target="#armor-delete-confirm">
+	            <i class="glyphicon glyphicon-trash"></i> Delete armor
+	          </button>
+          <% } %>
           <div class="row">
             <div class="col-lg-12 col-sm-12">
 		          <table id="armor-details" style="display:inline-table;">
@@ -198,3 +204,28 @@ var nullStat = "unkn";
 	  </div>
 	</div>
 </div>
+
+<div id="armor-delete-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Confirm</h4>
+        </div>
+        <div class="modal-body">
+          <p>Sure you want to delete <strong id="armor-delete-confirm-name"></strong>?</p>
+          <p>Take into account that this armor will also disappear from every player's inventory</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <button type="submit" class="btn btn-primary">Yup</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<% block("localScripts", "<script src='/dynamics/armor/show.js'></script>") %>

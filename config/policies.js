@@ -35,7 +35,7 @@ module.exports.policies = {
   
   armor : {
     "show"              : "isAuthenticated",
-    "index"             : "isAuthenticated",
+    "index"             : ["flash", "isAuthenticated"],
     "*"                 : ["flash", "isAuthenticated", "staff"]
   }
 
