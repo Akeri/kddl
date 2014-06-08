@@ -153,11 +153,13 @@ module.exports = {
               _.each(player.armors, function(playerArmor){
                 playerArmor.armor = mapArmors[playerArmor.armorId];
               });
+              var avm = req.param("avm") || req.session.armorsViewMode || "mosaic";
+              req.session.armorsViewMode = avm;
               res.view("player/edit_armors.ejs", {
                 user       : user,
                 player     : player,
                 armors     : armors,
-                armorsView : req.param("avm")
+                armorsView : avm
               });
             })
             .fail(function failed(err){
@@ -238,7 +240,7 @@ module.exports = {
   
   fuseOwnedArmor : function(req, res, next){
     var values = {
-      fused : new Date()  
+      fused : new Date()
     };
     PlayerArmor.update({ id : req.param("id"), playerId : req.param("playerId") }, values, function playerArmorFused(err, players){
       if (err){
@@ -253,6 +255,26 @@ module.exports = {
       }
       req.session.flash = {
         success : [{ message : "Armor fused successfully" }]
+      };
+      res.redirect("back");
+    });
+  },
+  
+  kick : function(req, res, next){
+    var playerId = req.param("playerId");
+    Player.update({ id : playerId }, { guildId : null, guildRank : null }, function playerKicked(err, players){
+      if (err){
+        req.session.flash = flash.from(err);
+        return res.redirect("back");
+      }
+      if (!players.length){
+        req.session.flash = flash.from({
+          err : [{ message : "Player not found" }]
+        });
+        return res.redirect("back");
+      }
+      req.session.flash = {
+        success : [{ message : players[0].name + " was kicked" }]
       };
       res.redirect("back");
     });

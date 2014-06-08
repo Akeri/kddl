@@ -30,6 +30,7 @@ module.exports.policies = {
   
   player : {
     "show"              : "isAuthenticated",
+    "kick"              : ["isAuthenticated", "staff"],
     "*"                 : ["flash", "isAuthenticated", "selfuser"]
   },
   
@@ -37,6 +38,10 @@ module.exports.policies = {
     "show"              : "isAuthenticated",
     "index"             : ["flash", "isAuthenticated"],
     "*"                 : ["flash", "isAuthenticated", "staff"]
+  },
+  
+  guild : {
+    "*"                 : ["flash", "isAuthenticated"]
   }
 
   /*

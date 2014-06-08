@@ -63,17 +63,24 @@ module.exports = {
         .exec(function foundPlayers(err, players){
           if (err) return next(err);
           user.players = players;
-          var end = function(){
+          var end = function(activePlayerId){
+            var avm = req.param("avm") || req.session.armorsViewMode || "mosaic";
+            req.session.armorsViewMode = avm;
             res.view({
-              user       : user,
-              armorsView : req.param("avm")
+              user           : user,
+              armorsView     : avm,
+              activePlayerId : activePlayerId
             });
           };
           if (!players.length) return end();
           var mapPlayers = _.indexBy(players, "id");
+          var activePlayer = (function(playerId){
+            return playerId ? mapPlayers[playerId] : players[0];
+          })(req.param("playerId"));
+          mapPlayers = _.indexBy([activePlayer], "id");
           Player.completeWithAll(mapPlayers, function gotIt(err){
             if (err) return next(err);
-            return end();
+            return end(activePlayer.id);
           });
       });
     });
@@ -189,9 +196,6 @@ module.exports = {
   // perform destroy operation
   destroy : function(req, res, next){
     var userId = req.param("id");
-    var redirect = function(){
-      res.redirect("/user");
-    };
     User.findOne(userId, function foundUser(err, user){
       if (err) return next(err);
       if (!user) return next("User doesn't exist.");
@@ -201,13 +205,24 @@ module.exports = {
         if (req.param("deletePlayers") == "on"){
           Player.destroy({userId : userId}, function playersDestroyed(err){
             if (err) return next(err);
-            return redirect();
+            req.session.flash = {
+              success : [{ message : "User " + user.nickname + " and his players have been deleted" }]
+            };
+            return res.redirect("back");
           });
         }else{
         // Else just unbound them
-          Player.update({userId : userId}, {userId : null}, function playersUpdated(err){
+          values = {userId : null};
+          if (req.param("kickPlayers") == "on"){
+            values.guildId = null;
+            values.guildRank = null;
+          }
+          req.session.flash = {
+            success : [{ message : "User" + user.nickname + " has been deleted" }]
+          };
+          Player.update({userId : userId}, values, function playersUpdated(err){
             if (err) return next(err);
-            return redirect();
+            return res.redirect("back");
           });
         }
       });

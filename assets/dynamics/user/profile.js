@@ -23,7 +23,7 @@
     $("#player-delete-confirm #player-delete-confirm-name").text(playerName);
   });
   
-  //Render actual parameters on player power breakdown
+  // Render actual parameters on player power breakdown
   $(document).on("click", ".btn-player-power-breakdown", function(){
     var playerName = $(this).data("player_name");
     var power = $(this).data("player_power");

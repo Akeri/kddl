@@ -36,6 +36,11 @@ module.exports.routes = {
     view: 'home/index'
   },
   
+  '/user/profile/:id/player/:playerId' : {
+    controller  : 'UserController',
+    action      : 'profile'
+  },
+  
   '/user/profile/:id/edit' : {
     controller  : 'UserController',
     action      : 'profileEdit'
@@ -104,6 +109,11 @@ module.exports.routes = {
   '/user/:userId/player/:playerId/armor/fuse/:id' : {
     controller  : "PlayerController",
     action      : "fuseOwnedArmor"
+  },
+  
+  '/guild/show' : {
+    controller  : "GuildController",
+    action      : "showUserGuild"
   }
 
   /*

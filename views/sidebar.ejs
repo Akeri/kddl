@@ -8,6 +8,7 @@
 	  <li><a href="/"><i class="glyphicon glyphicon-home"></i> Home</a></li>
 	  <% if (session.authenticated){ %>
 	    <li><a href="/user/profile/<%- session.User.id %>"><i class="glyphicon glyphicon-th-large"></i> My profile</a></li>
+	    <li><a href="/guild/show"><i class="glyphicon glyphicon-flag"></i> My guild</a></li>
 	    <% if (sails.services.rolemanager.userInGroup(session.User, "admin")){ %>
 	      <li><a href="/user"><i class="glyphicon glyphicon-user"></i> Manager users</a></li>
 		    <li><a href="/armor/crawler"><i class="glyphicon glyphicon-cloud-download"></i> Armor crawler</a></li>

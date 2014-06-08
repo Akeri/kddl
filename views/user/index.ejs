@@ -54,6 +54,8 @@
   <li class="active">User</li>
 </ol>
 
+<%- partial("../flash.ejs") %>
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <h4>Users</h4>
@@ -81,7 +83,7 @@
       <thead>
         <tr>
           <th data-sort-ignore="true" data-name="avatar">&nbsp;</th>
-          <th data-name="nickname" data-toggle="true">Nick</th>
+          <th data-name="nickname" data-toggle="true" data-sort-initial="ascending">Nick</th>
           <th data-name="online">&nbsp;</th>
           <th data-name="role">Role</th>
           <th data-name="country" data-hide="phone,tablet">Country</th>

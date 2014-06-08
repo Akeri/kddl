@@ -17,7 +17,7 @@
 
 module.exports = {
     
- // Render the guild view
+  // Render the guild view
   show : function(req, res, next){
     var end = function(guild){
       res.view({
@@ -52,5 +52,19 @@ module.exports = {
       });
     });
   },
+  
+  // Render the guilds of session user
+  showUserGuild : function(req, res, next){
+    var userId = req.session.User.id;
+    Player.find({userId : userId}, function(err, players){
+      if (err) return next(err);
+      var guildIds = [];
+      _.each(players, function(player){
+        if (player.guildId != null) guildIds.push(player.guildId);
+      });
+      if (!guildIds.length) res.redirect("/user/profile/" + userId);
+      res.redirect("/guild/show/" + guildIds[0]);
+    });
+  }
   
 };

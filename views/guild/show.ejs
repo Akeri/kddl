@@ -19,6 +19,46 @@
   .user-avatar-thumb + .glyphicon-user {
     float:left;
   }
+  .player-name-main {
+    font-weight:bold;
+  }
+  #players-filter-case {
+    margin-top:30px;
+  }
+  #players-filter-case > div {
+    padding:0;
+    padding-left:10px;
+  }
+  #players-filter-case > div:first-child {
+    padding-left:0;
+  }
+  #players-filter-case select {
+    line-height:36px;
+  }
+  #players-filter-case .bootstrap-select {
+    margin-bottom:0;
+  }
+  @media screen and (max-width: 768px) {
+    #players-filter-case > div {
+      margin-top:10px;
+      padding-left:0;
+    }
+    #players-filter-case > div:first-child {
+      margin-top:0;
+    }
+  }
+  #players-table td, #players-table th {
+    vertical-align:middle;
+  }
+  .footable-row-detail-value .player-tools-case {
+    margin-top:5px;
+  }
+  .player-kick-confirm-opts {
+    line-height:25px;
+  }
+  .player-kick-confirm-opts input[type="radio"] {
+    margin-right:5px;
+  }
 </style>
 
 <ol class="breadcrumb">
@@ -28,6 +68,7 @@
 </ol>
 
 <%- partial("../flash.ejs") %>
+<% var isAdmin = sails.services.rolemanager.userInGroup(session.User, "admin"); %>
 
 <div id="guild-show" class="panel panel-default">
   <div class="panel-heading">
@@ -77,6 +118,24 @@
 		    </div>
 	    </div>
 	    
+	    <div id="players-filter-case" class="row">
+	      <div id="player-name-filter-case" class="col-xs-12 col-sm-4">
+	        <div class="input-group">
+	          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+	          <input type="text" class="form-control" placeholder="Search by name" id="players-name-filter">
+	        </div>
+	      </div>
+	      <div class="col-xs-12 col-sm-4">
+	        <%- partial("../components/rank-selector.ejs", {data : {
+            id      : "players-rank-filter",
+            noneOpt : "Filter by rank..."
+          }}) %>
+	      </div>
+	      <!-- Filters -->
+	    </div>
+	    
+	    <hr />
+	    
 	    <div>
 	      <table id="players-table" class="footable table table-hover toggle-square-filled" data-page-size="10">
 		      <thead>
@@ -84,11 +143,16 @@
 		          <th data-sort-ignore="true" data-name="avatar">&nbsp;</th>
 		          <th data-name="name" data-toggle="true">Nick</th>
 		          <th data-name="online">&nbsp;</th>
-		          <th data-name="power">Power</th>
+		          <th data-name="power" data-sort-initial="descending">Power</th>
 		          <th data-name="rank" data-hide="phone">Rank</th>
-		          <th data-name="country" data-hide="phone,tablet">Country</th>
+		          <th data-name="who is" data-hide="all">&nbsp;</th>
+		          <th data-name="country" data-hide="phone">Country</th>
+		          <th data-name="time" data-hide="phone,tablet">Time</th>
 		          <th data-name="labels" data-hide="all">Labels</th>
-		          <th data-sort-ignore="true" data-hide="phone" data-class="user-tools">Tools</th>
+		          <th data-sort-ignore="true" data-class="player-tools"
+		          <% if (!isAdmin){ %> data-ignore="true" data-hide="all" <% }else{ %> data-hide="phone" <% } %>>
+		            &nbsp;
+	            </th>
 		        </tr>
 		      </thead>
 		      <tbody>
@@ -100,7 +164,11 @@
 	              <% } %>
 		          </td>
 		          <td>
-		            <a href="/player/show/<%- player.id %>" title="View <%= player.name %>"><%= player.name %></a>
+		            <a href="<%- player.user ? ('/user/profile/' + player.user.id + '/player/' + player.id) : '/player/show/' + player.id %>"
+		            title="View <%= player.name %>"
+		            <% if (player.main === true){ %> class="player-name-main" <% } %>>
+		              <%= player.name %>
+	              </a>
 		          </td>
 		          <td data-value="<%- player.user && player.user.online ? 'online' : 'offline' %>">
 		            <% if (player.user && player.user.online){ %>
@@ -117,6 +185,12 @@
 		              return "<span class='label label-default'>" + rank.name + "</span>";
 		            })() %>
 		          </td>
+		          <td><%- (function(){
+		            if (!player.user) return "Main player (no bound user)";
+		            var userLink = "<a href='/user/profile/" + player.user.id + "'>" + player.user.nickname + "</a>";
+		            if (player.main === true) return "Main player of " + userLink;
+		            return "Secondary player of " + userLink;
+	            })() %></td>
 		          <td>
 		            <% if (player.user && player.user.country){
 		              var country = player.user.country; %>
@@ -126,6 +200,8 @@
 		              <i>unkn</i>
 		            <% } %>
 		          </td>
+		          <td class="player-current-time"
+		          <% if (player.user && player.user.timezone){ %> data-timezone="<%- player.user.timezone %>" <% } %>></td>
 		          <td><%
 		            if (!player.captions.length){ %>
 		              <i>none</i>
@@ -135,8 +211,17 @@
 		              <% })
 		            } %>
 		          </td>
-		          <td>
-		            &nbsp;
+		          <td style="width:30px;">
+		            <div class="player-tools-case">
+		              <button title="Kick from guild" type="button"
+		              class="btn-player-kick btn btn-default btn-sm"
+		              data-toggle="modal" data-target="#player-kick-confirm"
+		              data-player_id="<%- player.id %>" data-player_name="<%= player.name %>"
+		              data-guild_id="<%- guild.id %>" data-guild_name="<%= guild.name %>"
+		              <% if (player.user){ %> data-user_id="<%- player.user.id %>" data-user_nickname="<%= player.user.nickname %>" <% } %>>
+		                <i class="glyphicon glyphicon-trash"></i>
+		              </button>
+		            </div>
 		          </td>
 		        </tr>
 		      <% }) %>
@@ -156,6 +241,45 @@
   </div><!-- /panel-body -->
 </div>
 
+<div id="player-kick-confirm" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          Kick from
+          <span class="dialog-guild-name text-primary"></strong>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="player-kick-confirm-opts">
+         <p>What do you want to do?</p>
+         <div>
+          <input type="radio" name="player-kick-opt" value="player-kick" />
+            Kick <strong class="dialog-player-name"></strong> from guild<br />
+          <input type="radio" name="player-kick-opt" value="user-delete-players-kick" />
+            Delete user <strong class="dialog-user-nickname"></strong> and kick his players from guild<br />
+          <input type="radio" name="player-kick-opt" value="user-delete-players-delete" />
+            Delete user <strong class="dialog-user-nickname"></strong> and also his players<br />
+         </div>
+        </div>
+        <div class="player-kick-confirm-single" style="display:none;">
+          <p>Sure you want to kick <strong class="dialog-player-name"></strong>?</p>
+        </div>
+        <form id="kick-player-form" method="POST">
+          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          <input name="playerId" type="hidden" />
+          <input name="userId" type="hidden" />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-right:5px;">Cancel</button>
+        <button type="submit" class="btn btn-primary" form="kick-player-form">Proceed</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <% block("localCSS", "<link rel='stylesheet' href='/lib/flags/flags.css'>") %>
 <% block("localCSS", "<link rel='stylesheet' href='/lib/footable/footable-core.css'>") %>
 <% block("localCSS", "<link rel='stylesheet' href='/lib/bootstrap-select/bootstrap-select.min.css'>") %>
@@ -164,4 +288,7 @@
 <% block("localScripts", "<script src='/lib/footable/footable.filter.js'></script>") %>
 <% block("localScripts", "<script src='/lib/footable/footable.sort.min.js'></script>") %>
 <% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment-timezone.js'></script>") %>
+<% block("localScripts", "<script src='/lib/moment/moment-timezone-data.js'></script>") %>
 <% block("localScripts", "<script src='/dynamics/guild/show.js'></script>") %>
