@@ -18,6 +18,8 @@ module.exports.policies = {
   // (`true` allows public access) 
   '*': "flash",
   
+  "/" : "flash",
+  
   user : {
     "show"              : "isAuthenticated",
     "new"               : ["flash", "isAuthenticated", "staff"],

@@ -27,12 +27,7 @@ module.exports = {
     var guildId = req.param("id");
     Guild.findOne(guildId, function foundGuild(err, guild){
       if (err) return next(err);
-      if (!guild){
-        req.session.flash = {
-          err : [{ message : "Guild not found" }]
-        };
-        return res.redirect("/");
-      }
+      if (!guild) res.view("404.ejs");
       Player.find({guildId : guildId})
         .exec(function foundPlayers(err, players){
           if (err) return next(err);
@@ -64,6 +59,17 @@ module.exports = {
       });
       if (!guildIds.length) res.redirect("/user/profile/" + userId);
       res.redirect("/guild/show/" + guildIds[0]);
+    });
+  },
+  
+  // Render the guild edit view
+  edit : function(req, res, next){
+    Guild.findOne(guildId, function foundGuild(err, guild){
+      if (err) return next(err);
+      if (!guild) res.view("404.ejs");
+      res.view({
+        guild : guild
+      });
     });
   }
   

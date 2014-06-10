@@ -78,7 +78,7 @@
 			</div>
 		  <div class="panel-body">
 		    <div class="titles-container" style="text-align:right;margin-bottom:15px;">
-		      <span class="label label-default"><%- sails.services.rolemanager.getRoleByKey(user.role).label %></span>
+		      <span class="label label-default"><%- "Member" || sails.services.rolemanager.getRoleByKey(user.role).label %></span>
 		      <% _.each(user.captions, function(caption){ %>
 		        <span class="label label-info"><%= caption %></span>
 		      <% }) %>
