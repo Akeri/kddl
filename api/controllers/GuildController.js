@@ -57,7 +57,13 @@ module.exports = {
       _.each(players, function(player){
         if (player.guildId != null) guildIds.push(player.guildId);
       });
-      if (!guildIds.length) res.redirect("/user/profile/" + userId);
+      if (!guildIds.length){
+        req.session.flash = {err : [{
+          message : "You don't belong to any alliance",
+          level   : "warning"
+        }]};
+        return res.redirect("/user/profile/" + userId);
+      }
       res.redirect("/guild/show/" + guildIds[0]);
     });
   },

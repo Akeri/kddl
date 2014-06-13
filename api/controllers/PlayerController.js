@@ -20,16 +20,20 @@ var flash = require("../services/flashmaker.js");
 module.exports = {
     
   "new" : function(req, res){
-    Guild.find()
-      .sort("name")
-      .then(function foundGuilds(guilds){
-        res.view({
-          guilds : guilds,
-          userId : req.param("userId")
+    User.findOne(req.param("userId"), function foundUser(err, user){
+      if (err) return res.view("500.ejs");
+      if (!user) return res.view("404.ejs");
+      Guild.find()
+        .sort("name")
+        .then(function foundGuilds(guilds){
+          res.view({
+            guilds : guilds,
+            user   : user
+          });
+        }).fail(function failed(err){
+          return next(err);
         });
-      }).fail(function failed(err){
-        return next(err);
-      });
+    });
   },
   
   edit : function(req, res, next){

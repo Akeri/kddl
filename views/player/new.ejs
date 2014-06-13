@@ -17,15 +17,14 @@
 
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
-  <li><a href="/user">User</a></li>
-  <li><a href="/user/profile/<%- session.User.id %>"><%= session.User.nickname %></a></li>
-  <li><a href="/user/profile/<%- session.User.id %>/edit">Edit profile</a></li>
+  <li><a href="/user/profile/<%- user.id %>"><%= user.nickname %></a></li>
+  <li><a href="/user/profile/<%- user.id %>/edit">Edit profile</a></li>
   <li class="active">Add player</li>
 </ol>
 
 <%- partial("../flash.ejs") %>
 
-<form role="form" method="POST" action="/user/<%- userId %>/player/create">
+<form role="form" method="POST" action="/user/<%- user.id %>/player/create">
   <div class="row">
   
     <div class="col-sm-6 col-xs-12">
@@ -76,7 +75,7 @@
     
     <div class="col-sm-6 col-xs-12">
       <div class="panel panel-default panel-body">
-        <% if (userId){ %>
+        <% if (user.id){ %>
 	        <div class="form-group">
 	          <label for="player-main">Is this player main?</label>
 	          <div class="input-group">
