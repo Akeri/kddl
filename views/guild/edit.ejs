@@ -1,0 +1,68 @@
+<style>
+  #guild-description {
+    resize:none;
+    min-height:320px;
+    max-height:320px;
+  }
+  .bootstrap-wysihtml5-insert-image-modal .modal-header > h3,
+  .bootstrap-wysihtml5-insert-link-modal .modal-header > h3 {
+    font-size:18px;
+    margin-top:10px;
+  }
+	#voiceBtn {
+	  width: 20px;
+	  color: transparent;
+	  background-color: transparent;
+	  transform: scale(2.0, 2.0);
+	  -webkit-transform: scale(2.0, 2.0);
+	  -moz-transform: scale(2.0, 2.0);
+	  border: transparent;
+	  cursor: pointer;
+	  box-shadow: none;
+	  -webkit-box-shadow: none;
+	}
+	div[data-role="editor-toolbar"] {
+	  -webkit-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	}
+	.dropdown-menu a {
+	  cursor: pointer;
+	}
+</style>
+
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li>Guild</li>
+  <li><a href="/guild/show/<%- guild.id %>"><%= guild.name %></a></li>
+  <li class="active">Edit</li>
+</ol>
+
+<%- partial("../flash.ejs") %>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Edit <%= guild.name %></h4>
+  </div>
+  <div class="panel-body">
+    <form method="POST" action="/guild/update/<%- guild.id %>">
+	    <div class="form-group">
+	      <label for="guild-description">Description</label>
+		    <textarea name="description" id="guild-description" class="form-control textarea" placeholder="Write the guild's description"><%- guild.description %></textarea>
+	    </div>
+	    <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+      <div class="btn-toolbar">
+		    <button type="submit" class="btn btn-md btn-success">
+		      <span class="glyphicon glyphicon-edit"></span> Update
+	      </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<% block("localCSS", "<link rel='stylesheet' href='/lib/wysihtml5/bootstrap3-wysihtml5.min.css'>") %>
+
+<% block("localScripts", "<script src='/lib/wysihtml5/bootstrap3-wysihtml5.all.min.js'></script>") %>
+<% block("localScripts", "<script src='/lib/wysihtml5/defaults.js'></script>") %>
+<% block("localScripts", "<script src='/dynamics/guild/edit.js'></script>") %>

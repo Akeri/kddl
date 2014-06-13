@@ -1,4 +1,5 @@
 var flash = require("../services/flashmaker.js");
+var roleManager = require("../services/rolemanager.js");
 
 /**
  * UserController
@@ -58,30 +59,33 @@ module.exports = {
     User.findOne(req.param("id"), function foundUser(err, user){
       if (err) return next(err);
       if (!user) return next();
-      Player.find({userId : user.id})
-        .sort({main : "desc", name : "asc"})
-        .exec(function foundPlayers(err, players){
-          if (err) return next(err);
-          user.players = players;
-          var end = function(activePlayerId){
-            var avm = req.param("avm") || req.session.armorsViewMode || "mosaic";
-            req.session.armorsViewMode = avm;
-            res.view({
-              user           : user,
-              armorsView     : avm,
-              activePlayerId : activePlayerId
-            });
-          };
-          if (!players.length) return end();
-          var mapPlayers = _.indexBy(players, "id");
-          var activePlayer = (function(playerId){
-            return playerId ? mapPlayers[playerId] : players[0];
-          })(req.param("playerId"));
-          mapPlayers = _.indexBy([activePlayer], "id");
-          Player.completeWithAll(mapPlayers, function gotIt(err){
+      roleManager.userAboveUser(req.session.User, user, function(canEditUser){
+        Player.find({userId : user.id})
+          .sort({main : "desc", name : "asc"})
+          .exec(function foundPlayers(err, players){
             if (err) return next(err);
-            return end(activePlayer.id);
-          });
+            user.players = players;
+            var end = function(activePlayerId){
+              var avm = req.param("avm") || req.session.armorsViewMode || "mosaic";
+              req.session.armorsViewMode = avm;
+              res.view({
+                user           : user,
+                armorsView     : avm,
+                activePlayerId : activePlayerId,
+                canEditUser    : canEditUser
+              });
+            };
+            if (!players.length) return end();
+            var mapPlayers = _.indexBy(players, "id");
+            var activePlayer = (function(playerId){
+              return playerId ? mapPlayers[playerId] : players[0];
+            })(req.param("playerId"));
+            mapPlayers = _.indexBy([activePlayer], "id");
+            Player.completeWithAll(mapPlayers, function gotIt(err){
+              if (err) return next(err);
+              return end(activePlayer.id);
+            });
+        });
       });
     });
   },

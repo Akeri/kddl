@@ -65,14 +65,13 @@
 			<div class="panel panel-default panel-body">
 				<div class="form-group">
 			    <label for="user-role">*Role</label><br />
-			    <select name="role" id="user-role">
-			      <% _.each(sails.services.rolemanager.getRoleKeys(), function(roleKey){ 
-			        var role = sails.services.rolemanager.getRoleByKey(roleKey); %>
-			        <option data-description="<%- role.description %>" value="<%- roleKey %>" <% if (roleKey == "trial"){ %> selected="selected" <% } %>>
-			          <%- role.label %>
-			        </option>
-			      <% }) %>
-			    </select>
+			    <%- partial("../components/role-selector.ejs", {data : {
+            id       : "user-role",
+            roles    : sails.services.rolemanager.getRolesBelow(session.User.role),
+            name     : "role",
+            noneOpt  : null,
+            value    : "trial"
+          }}) %>
 			  </div>
 			  <div id="role-description">
 		      Role description

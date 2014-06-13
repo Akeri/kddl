@@ -68,6 +68,7 @@
           <label for="user-role">Role</label><br />
           <%- partial("../components/role-selector.ejs", {data : {
 	          id       : "user-role",
+	          roles    : sails.services.rolemanager.getRolesBelow(session.User.role),
 	          name     : "role",
 	          noneOpt  : null,
 	          value    : user.role

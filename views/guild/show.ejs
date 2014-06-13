@@ -59,6 +59,10 @@
   .player-kick-confirm-opts input[type="radio"] {
     margin-right:5px;
   }
+  blockquote.guild-description {
+    font-size:14px;
+    margin:0;
+  }
 </style>
 
 <ol class="breadcrumb">
@@ -79,12 +83,25 @@
   </div>
   <div class="panel-body">
     
-    <% if (guild.description && guild.description.length){ %>
-      <p><%= guild.description %></p>
-    <% }else{ %>
-      <p><i>No description</i></p>
+    <div class="pull-left">
+	    <% if (guild.description && guild.description.length){ %>
+	      <div>
+	        <blockquote class="guild-description">
+	          <%- guild.description.replace(/^\s*<br\s*\/?>|<br\s*\/?>\s*$/g, "") %>
+	        </blockquote>
+        </div>
+	    <% }else{ %>
+	      <p><i>No description</i></p>
+	    <% } %>
+    </div>
+    
+    <% if (isAdmin){ %>
+      <a href="/guild/edit/<%- guild.id %>" class="btn btn-primary pull-right">Edit</a>
     <% } %>
     
+    <br />
+    
+    <div style="margin-top:50px;">
     <% if (!guild.players.length){ %>
       <p><i>No players</i></p>
     <% }else{ %>
@@ -200,8 +217,11 @@
 		              <i>unkn</i>
 		            <% } %>
 		          </td>
-		          <td class="player-current-time"
-		          <% if (player.user && player.user.timezone){ %> data-timezone="<%- player.user.timezone %>" <% } %>></td>
+		          <td>
+		            <span class="player-current-time"
+	              <% if (player.user && player.user.timezone){ %> data-timezone="<%- player.user.timezone %>" <% } %>>
+	              </span>
+	            </td>
 		          <td><%
 		            if (!player.captions.length){ %>
 		              <i>none</i>
@@ -235,8 +255,10 @@
 		      </tbody>
 		    </table>
 	    </div>
-	    
 	  <% } %>
+	    
+    </div>
+	    
     
   </div><!-- /panel-body -->
 </div>

@@ -105,6 +105,6 @@
   }
 
   renderTime();
-  setTimeout(renderTime, 1000); // render time every 1000ms
+  setInterval(renderTime, 1000); // render time every 1000ms
 
 })();

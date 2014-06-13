@@ -33,20 +33,24 @@ module.exports = {
   },
   
   edit : function(req, res, next){
-    Player.findOne(req.param("id"), function foundPlayer(err, player){
-      if (err) return next(err);
-      if (!player) return next("Player doesn't exist.");
-      Guild.find()
-        .sort("name")
-        .then(function foundGuilds(guilds){
-          res.view({
-            player : player,
-            userId : req.param("userId"),
-            guilds : guilds
+    User.findOne(req.param("userId"), function foundUser(err, user){
+      if (err) return res.view("500.ejs");
+      if (!user) return res.view("404.ejs");
+      Player.findOne(req.param("id"), function foundPlayer(err, player){
+        if (err) return next(err);
+        if (!player) return next("Player doesn't exist.");
+        Guild.find()
+          .sort("name")
+          .then(function foundGuilds(guilds){
+            res.view({
+              user   : user,
+              player : player,
+              guilds : guilds
+            });
+          }).fail(function failed(err){
+            return next(err);
           });
-        }).fail(function failed(err){
-          return next(err);
-        });
+      });
     });
   },
   

@@ -1,8 +1,7 @@
+var roleManager = require("../services/rolemanager.js");
 
 module.exports = function(req, res, ok){
-//  console.log(req.param("id"), req.param("_allowToUserId_"), req.session.User.id);
-  if (req.session.User && (req.param("id") == req.session.User.id)) ok();
-  else {
+  var error = function(){
     var requireOwnageError = [{
       name    : "requireOwnage",
       message : "You are not allowed",
@@ -10,6 +9,14 @@ module.exports = function(req, res, ok){
     }];
     req.session.flash = {err : requireOwnageError};
     res.redirect("/session/new");
+  };
+  if (!req.session.User) return error();
+  var userId = req.param("id");
+  if (userId == req.session.User.id){
+    req.self = true;
+    return ok();
   }
-    
+  roleManager.userAboveUser(req.session.User.id, userId, function(allowed){
+    return allowed ? ok() : error();
+  });
 };

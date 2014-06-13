@@ -87,6 +87,7 @@ module.exports = {
 //        res.redirect("/user/" + user.id + "/player/new");
 //        res.redirect("/user");
 //        res.redirect("/guild/show/" + sails.config.kddl.mainGuildId);
+//        res.redirect("/guild/edit/" + sails.config.kddl.mainGuildId);
       });
     });
   },

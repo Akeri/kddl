@@ -111,12 +111,11 @@
 		    </table>
 <!-- 			  <strong>email:</strong> <span><%= user.email %></span> -->
 		    <% 
-		    var isSelfProfile = user.id == session.User.id;
-		    var canEditUser = sails.services.rolemanager.userInGroup(session.User, "admin");
-		    if (isSelfProfile || canEditUser){ %>
+		    var canEditProfile = canEditUser || user.id == session.User.id;
+		    if (canEditProfile || canEditUser){ %>
 		      <hr />
 		      <div>
-		      <% if (isSelfProfile){ %>
+		      <% if (canEditProfile){ %>
 		        <a class="btn btn-medium btn-primary" href="/user/profile/<%= user.id %>/edit">Edit profile</a>
 		      <% } %>
 		      <% if (canEditUser){ %>
@@ -144,7 +143,7 @@
     <div class="col-lg-12">
       <div class="panel panel-default panel-body">
 	      <p class="lead">No players</p>
-	      <% if (isSelfProfile){ %>
+	      <% if (canEditProfile){ %>
 		      <p>Do you want to add one?</p>
 		      <a title="Add player" class="btn btn-medium btn-success" href="/user/<%- user.id %>/player/new">
 		        <span class="glyphicon glyphicon-plus"></span>
@@ -230,7 +229,7 @@
 					    }
 					  }}) %>
 		        
-		        <% if (isSelfProfile || canEditUser){ %>
+		        <% if (canEditProfile || canEditUser){ %>
 		          <hr />
 		          <a title="Update armors" class="btn btn-medium btn-primary" href="/user/<%- user.id %>/player/editarmors/<%- player.id %>">
                 <span>Update armors</span>

@@ -64,12 +64,28 @@ module.exports = {
   
   // Render the guild edit view
   edit : function(req, res, next){
-    Guild.findOne(guildId, function foundGuild(err, guild){
+    Guild.findOne(req.param("id"), function foundGuild(err, guild){
       if (err) return next(err);
       if (!guild) res.view("404.ejs");
       res.view({
         guild : guild
       });
+    });
+  },
+  
+  // Update a guild object from edit view
+  update : function(req, res, next){
+    var values = req.params.all();
+    var guildId = values.id;
+    Guild.update(guildId, values, function guildUpdated(err){
+      if (err){
+        req.session.flash = flash.from(err);
+        return res.redirect("back");
+      }
+      req.session.flash = {
+        success : [{ message : "Guild description has been updated" }]
+      };
+      res.redirect("/guild/show/" + guildId);
     });
   }
   
