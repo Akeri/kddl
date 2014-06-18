@@ -48,6 +48,9 @@
         "<td>x" + count + "</td>" +
         "<td>= " + Math.round(group.score) + "</td>";
     });
+    console.log(power.groups.length);
+    if (power.groups.length % 2 != 0)
+      content += "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
     content += "</tr>";
     $tbody.append(content);
   });
