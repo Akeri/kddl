@@ -161,8 +161,8 @@ module.exports = {
           return b.power - a.power;
         });
         groupArmors = groupArmors.slice(0, 3); // Only 3 armors of the same combo are useful
-        _.each(groupArmors, function(playerArmor){
-          group.score += playerArmor.power;
+        _.each(groupArmors, function(playerArmor, i){
+          group.score += playerArmor.power * (1 - (i * .25));
         });
         power.base += group.score;
       });

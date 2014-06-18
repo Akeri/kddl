@@ -114,6 +114,11 @@ module.exports.routes = {
   '/guild/show' : {
     controller  : "GuildController",
     action      : "showUserGuild"
+  },
+  
+  '/armor/inspectpage/:armorId' : {
+    controller  : "ArmorController",
+    action      : "resync"
   }
 
   /*

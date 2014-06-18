@@ -56,10 +56,15 @@ var nullStat = "unkn";
         </div>
         <div class="panel-body" style="text-align:center;">
           <% if (sails.services.rolemanager.userInGroup(session.User, "admin")){ %>
-	          <button title="Delete from database" type="button" class="btn-armor-delete btn btn-primary btn-sm pull-right"
-	          data-armor_id="<%- armor.id %>" data-armor_name="<%= armor.name %>" data-toggle="modal" data-target="#armor-delete-confirm">
-	            <i class="glyphicon glyphicon-trash"></i> Delete armor
-	          </button>
+            <div style="text-align:right;margin-bottom:20px;">
+		          <button title="Delete from database" type="button" class="btn-armor-delete btn btn-primary btn-sm"
+		          data-armor_id="<%- armor.id %>" data-armor_name="<%= armor.name %>" data-toggle="modal" data-target="#armor-delete-confirm">
+		            <i class="glyphicon glyphicon-trash"></i> Delete armor
+		          </button>
+		          <a title="Synchronize armor with Wikia" class="btn btn-primary btn-sm" href="/armor/inspectpage/<%- armor.id %>">
+	              <i class="glyphicon glyphicon-cloud-download"></i> Resync armor
+	            </a>
+            </div>
           <% } %>
           <div class="row">
             <div class="col-lg-12 col-sm-12">

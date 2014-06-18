@@ -177,6 +177,51 @@ module.exports = {
       self.cancelCrawling = false;
       socket.emit("crawlEnd", overview);
     });
+  },
+  
+  inspectpage : function(req, res){
+    res.view("armor/inspect.ejs", {
+      armor : false
+    });
+    
+  },
+  
+  resync : function(req, res){
+    var armorId = req.param("armorId");
+    Armor.findOne(armorId, function(err, armor){
+      if (err) return res.view("500.ejs");
+      if (!armor) return res.view("404.ejs");
+      res.view("armor/inspect.ejs", {
+        armor : armor
+      });
+    });
+  },
+  
+  inspectStart : function(req, res){
+    var socket = sails.io.sockets.socket(req.socket.id);
+    var crawler = require("../services/wikiacrawler.js");
+    var armor = {wikiaLink : req.param("page").replace(crawler.wikiaUri, "")};
+    var overview = {scanned : 0};
+    var crawlingIsCanceled = function(){
+      return req.session.cancelCrawling === true;
+    };
+    var crawlCancel = function(){
+      delete req.session.cancelCrawling;
+      socket.emit("inspectCancel", "terminated by client"); // emit canceled status
+    };
+    var end = function(){
+      socket.emit("inspectEnd", overview); // emit finished status
+    };
+    var newArmor = function(armor){
+      socket.emit("newArmor", armor);
+    };
+    var updateArmor = function(armor){
+      socket.emit("updateArmor", armor);
+    };
+    var gotError = function(error){
+      socket.emit("inspectError", error.message);
+    };
+    crawler.inspectArmors("deep", 0, [armor], end, 100, overview, crawlingIsCanceled, crawlCancel, function(){}, newArmor, updateArmor, gotError);
   }
   
 };

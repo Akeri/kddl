@@ -30,6 +30,8 @@
   #player-power-breakdown table {
     max-width:300px;
     margin:0 auto;
+    border:solid 1px #bbbbbb;
+    box-shadow:0 0 5px 0 rgba(0,0,0,.15);
   }
   #player-power-breakdown th, #player-power-breakdown td {
     text-align:center;
@@ -42,6 +44,21 @@
   }
   #player-power-breakdown tr:last-child td {
     border-bottom:none;
+  }
+  #player-power-breakdown td:nth-child(1),
+  #player-power-breakdown td:nth-child(4) {
+    min-width:45px;
+  }
+  #player-power-breakdown td:nth-child(2),
+  #player-power-breakdown td:nth-child(5) {
+    padding-left:0;
+  }
+  #player-power-breakdown td:nth-child(3),
+  #player-power-breakdown td:nth-child(6) {
+    text-align:left;
+  }
+  #player-power-breakdown td:nth-child(3) {
+    border-right:solid 1px #e7e7e7;
   }
   #player-power-breakdown tfoot td {
     text-align:center;
@@ -289,17 +306,17 @@
         <p>Note that only the 3 strongest armors of every different combo of elements will be taken into account.</p>
         <div>
 	        <table class="table">
-	          <thead>
-	            <tr>
-	              <th>group</th>
-	              <th>count</th>
-	              <th>power</th>
-	            </tr>
-	          </thead>
+<!-- 	          <thead> -->
+<!-- 	            <tr> -->
+<!-- 	              <th>group</th> -->
+<!-- 	              <th>count</th> -->
+<!-- 	              <th>power</th> -->
+<!-- 	            </tr> -->
+<!-- 	          </thead> -->
 	          <tbody></tbody>
 	          <tfoot>
 	            <tr>
-	              <td colspan="3">
+	              <td colspan="6">
                   <span>Total Power:</span>
                   <span id="player-power-breakdown-base">0</span> +
                   <span id="player-power-breakdown-pctg">0</span>% =<br />

@@ -82,7 +82,7 @@ module.exports = {
         res.redirect("/user/profile/" + user.id);
 //        res.redirect("/user/profile/" + user.id + "/edit");
 //        res.redirect("/user/profile/" + user.id);
-//        res.redirect("/armor/crawler");
+//        res.redirect("/armor/inspectpage");
 //        res.redirect("/user/profile/" + user.id + "/edit/#user-players");
 //        res.redirect("/user/" + user.id + "/player/new");
 //        res.redirect("/user");

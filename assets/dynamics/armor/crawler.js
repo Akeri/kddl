@@ -8,7 +8,7 @@ var $rarities = $("#crawler-rarities-selector")
   .selectpicker("val", ["legendary", "epic"])
   .selectpicker("refresh");
 
-//Init guild rank selectpicker
+// Init guild rank selectpicker
 var $crawlMode = $("#crawling-mode-selector")
   .selectpicker({
     style : "btn-default",

@@ -392,6 +392,69 @@ module.exports = {
     };
     requestImage(armor, "mainPic");
     requestImage(armor, "secondaryPic");
+  },
+  
+  /**
+   * Inspect recursively and asynchronously a list of armors
+   * @param {string} mode Crawling mode
+   * @param {int} i Index of current armor on the list
+   * @param {[object]} armors Complete list of armors
+   * @param {function} end Callback to execute when last armor on the list is explored
+   * @param {float} step Progress porcentage that takes one armor inspection
+   * @param {object} overview Object where to store the crawling details
+   * @param {function} crawlingIsCanceled Callback to check whether the crawling process is terminated by client
+   * @param {function} crawlCancel Callback to execute when the crawling is process is termianted by client
+   * @param {function} updateProgress Callback to execute when a progress is performed on the crawling process
+   * @param {function} newArmor Callback to execute when a new armor is found. Receives the new armor object as argument
+   * @param {function} updateArmor Callback to execute when an existing armor is updated. Receives the updated armor object as argument
+   * @param {function} gotError Callback to execute when the process got an error. Receives the error object as argument
+   */
+  inspectArmors : function(mode, i, armors, end, step, overview, crawlingIsCanceled, crawlCancel, updateProgress, newArmor, updateArmor, gotError){
+    var self = this;
+    var armor = armors[i];
+    if (!armor) return end();
+    overview.scanned++;
+    updateProgress("updateProgress", { // emit progress step
+      value     : step * (i + 1),
+      status    : "scanning <strong>" + armor.name + "</strong>"
+    });
+    var next = function(){
+      if (++i == armors.length) return end(); // last armor?
+      if (crawlingIsCanceled()) return crawlCancel();
+      self.inspectArmors(mode, i, armors, end, step, overview, crawlingIsCanceled, crawlCancel, updateProgress, newArmor, updateArmor, gotError); // inspect next one
+    };
+    Armor.findOne() // look for this armor on db
+      .where({ wikiaLink : armor.wikiaLink })
+      .then(function(dbArmor){
+        if (mode == "basic" && dbArmor) return next(); // ignore this, inspect next one;
+        self.inspectArmor(armor,
+          function gotArmor(armor){
+            // got new armor object
+            if (!dbArmor){
+              self.downloadArmorPics(armor, function(armor){
+                Armor.create(armor, function armorStored(err, storedArmor){
+                  if (err) return console.log("Error storing " + armor.name + ":", err);
+                  newArmor(storedArmor);
+                });
+              });
+            }else{
+              self.downloadArmorPics(armor, function(armor){
+                Armor.update(dbArmor.id, armor, function armorUpdated(err, updatedArmors){
+                  if (err) return console.log("Error updating " + armor.name + ":", err);
+                  var diff = Armor.compare(dbArmor, armor);
+                  if (!_.isEmpty(diff)) updateArmor({
+                    armor   : updatedArmors.shift(),
+                    changes : diff
+                  });
+                });
+              });
+            }
+            next();
+          },
+          gotError
+        );
+      })
+    ;
   }
   
 };

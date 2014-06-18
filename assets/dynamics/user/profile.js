@@ -36,19 +36,20 @@
       return b.score - a.score;
     });
     var $tbody = $dialog.find("table > tbody").empty();
+    var content = "<tr>";
     $.each(power.groups, function(i, group){
+      if (i % 2 == 0) content += "</tr><tr>";
       var totalCount = group.count;
       var count = totalCount > 3 ? 3 : totalCount;
       var countLabel = count.toString();
       if (count != totalCount) countLabel += " (" + totalCount + ")";
-      var tr = "" +
-		"<tr>" +
-		  "<td>" + group.elemUi + "</td>" +
-		  "<td>" + countLabel + "</td>" +
-		  "<td>" + group.score + "</td>" +
-		"</tr>";
-      $tbody.append(tr);
+      content +=
+        "<td>" + group.elemUi + "</td>" +
+        "<td>x" + count + "</td>" +
+        "<td>= " + Math.round(group.score) + "</td>";
     });
+    content += "</tr>";
+    $tbody.append(content);
   });
   
 })();

@@ -75,5 +75,19 @@ module.exports = {
       ["water", "spirit"],
       ["starmetal"]
     ];
+  },
+  /**
+   * Get the elements combo details
+   * @param {[string]} elementKeys
+   * @returns {[Element]} List of element instances
+   */
+  getElements : function(elementKeys){
+    var elems = [];
+    _.each(elementKeys, function(elemKey){
+      var elem = elements[elemKey];
+      if (!elem) return;
+      elems.push(elem);
+    });
+    return elems;
   }
 };

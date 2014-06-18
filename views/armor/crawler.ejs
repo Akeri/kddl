@@ -4,60 +4,76 @@
   <li class="active">Crawler</li>
 </ol>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4>Armor Crawler</h4>
-  </div>
-  <div class="panel-body">
-    <div class="hidden-while-crawling">
-	    <p>This allows to synchronize our armors' database with the K&D Wikia's.
-	    Just push the button and clap</p>
-	    <div class="row">
-	      <div class="col-xs-12 col-sm-6">
-	        <%- partial("../components/rarity-selector.ejs", {data : {
-	          id       : "crawler-rarities-selector",
-	          rarities : _.omit(Armor.rarities, "nemesis"),
-	          noneOpt  : "All rarities...",
-	          multiple : true
-	        }}) %>
-	      </div>
-	      <div class="col-xs-12 col-sm-6">
-	        <select id="crawling-mode-selector">
-	          <option value="basic" data-subtext="only releases" selected>Basic</option>
-	          <option value="deep" data-subtext="releases & changes">Deep</option>
-	        </select>
-	      </div>
-	    </div>
-	    <div style="text-align:center;">
-		    <button id="start-crawling" type="button" class="btn btn-lg btn-primary" style="font-size:14px;">
-		      <i class="glyphicon glyphicon-cloud-download" style="margin-right:5px;"></i> Crawl
-		    </button>
-	    </div>
-	  </div>
-    <div class="shown-while-crawling" style="display:none;">
-      <div id="progress-status" style="
-        text-align:right;
-        margin-bottom:5px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      ">&nbsp;</div>
-      <div id="crawling-progress" class="progress" style="margin:0;">
-        <div class="progress-bar progress-bar-success" role="progressbar"
-        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
-          &nbsp;
-        </div>
-      </div>
-      <button id="stop-crawling" type="button" class="btn btn-danger" style="margin-top:10px;">
-	      Stop
-	    </button>
-	    <button id="restart-crawling" type="button" class="btn btn-primary" style="margin-top:10px;display:none;">
-        Reset
-      </button>
+<div>
+  <!-- TABS -->
+  <ul class="nav nav-tabs bg-default">
+    <li class="active">
+      <a>Armor Crawler</a>
+    </li>
+    <li>
+      <a href="/armor/inspectpage">Inspect specific</a>
+    </li>
+  </ul>
+  <!-- /TABS -->
+  
+  <div class="tab-content">
+    <div class="tab-pane fade active in">
+  
+      <div class="panel panel-default panel-body">
+		    <div class="hidden-while-crawling">
+		      <p>This allows to synchronize our armors' database with the K&D Wikia's.
+		      Just push the button and clap</p>
+		      <div class="row">
+		        <div class="col-xs-12 col-sm-6">
+		          <%- partial("../components/rarity-selector.ejs", {data : {
+		            id       : "crawler-rarities-selector",
+		            rarities : _.omit(Armor.rarities, "nemesis"),
+		            noneOpt  : "All rarities...",
+		            multiple : true
+		          }}) %>
+		        </div>
+		        <div class="col-xs-12 col-sm-6">
+		          <select id="crawling-mode-selector">
+		            <option value="basic" data-subtext="only releases" selected>Basic</option>
+		            <option value="deep" data-subtext="releases & changes">Deep</option>
+		          </select>
+		        </div>
+		      </div>
+		      <div style="text-align:center;">
+		        <button id="start-crawling" type="button" class="btn btn-lg btn-primary" style="font-size:14px;">
+		          <i class="glyphicon glyphicon-cloud-download" style="margin-right:5px;"></i> Crawl
+		        </button>
+		      </div>
+		    </div>
+		    <div class="shown-while-crawling" style="display:none;">
+		      <div id="progress-status" style="
+		        text-align:right;
+		        margin-bottom:5px;
+		        white-space:nowrap;
+		        overflow:hidden;
+		        text-overflow:ellipsis;
+		      ">&nbsp;</div>
+		      <div id="crawling-progress" class="progress" style="margin:0;">
+		        <div class="progress-bar progress-bar-success" role="progressbar"
+		        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
+		          &nbsp;
+		        </div>
+		      </div>
+		      <button id="stop-crawling" type="button" class="btn btn-danger" style="margin-top:10px;">
+		        Stop
+		      </button>
+		      <button id="restart-crawling" type="button" class="btn btn-primary" style="margin-top:10px;display:none;">
+		        Reset
+		      </button>
+		    </div>
+			</div>
+  
     </div>
   </div>
+  
 </div>
-
+  
+  
 <div class="panel panel-default shown-while-crawling" style="display:none;">
   <div class="panel-heading">
     <h4>New armors</h4>
