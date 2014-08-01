@@ -5,15 +5,18 @@
   "description": "a Sails application",
   "dependencies": {
     "cheerio": "^0.16.0",
-    "request": "^2.36.0",
+    "request": "^2.39.0",
     "bcrypt": "^0.7.8",
-    "sails": "0.9.15",
+    "sails": "^0.9.15",
     "grunt": "0.4.1",
     "sails-disk": "~0.9.0",
-    "ejs": "0.8.4",
-    "optimist": "0.3.4",
+    "ejs": "^0.8.4",
+    "optimist": "^0.3.4",
     "sails-mongo": "^0.9.7",
-    "underscore.string": "^2.3.3"
+    "underscore.string": "^2.3.3",
+    "mkdirp": "^0.5.0",
+    "glob": "^4.0.5",
+    "image-size": "^0.3.2"
   },
   "scripts": {
     "start": "node app.js",

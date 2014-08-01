@@ -191,21 +191,32 @@
 	</div>
 	
   <div class="col-sm-4 col-xs-12">
-    <form role="form" method="POST" action="/user/profile/<%- user.id %>/update">
-	    <div class="panel panel-default">
-	      <div class="panel-heading">
-	        <h4>Avatar</h4>
-	      </div>
-	      <div class="panel-body">
-	        <p>Your actual avatar</p>
-		      <img class="img-thumbnail center-block" src="<%= User.getAvatarPath(user.avatar) %>" style="display:block;" />
-		      <input type="hidden" name="_csrf" value="<%= _csrf %>" />
-		      <button type="button" class="btn btn-primary center-block" style="margin-top:5px;">
-		        <span class="glyphicon glyphicon-cloud-upload"></span> Upload new one
-		      </button>
-			  </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Avatar</h4>
+      </div>
+      <div class="panel-body">
+        <p>Your actual avatar</p>
+	      <img id="avatar" class="img-thumbnail center-block" src="<%= User.getAvatarPath(user.avatar) %>" style="display:block;" />
+	      <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	      <input type="file" name="file" id="user-avatar" style="display:none;" data-user_id = "<%- user.id %>" accept="image/*" />
+	      <div class="center-block" style="display:table;">
+	        <form role="form" method="POST" action="/user/<%- user.id %>/confirmavatar">
+	          <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	          <input type="hidden" name="tmppath" />
+			      <button id="btn-user-avatar" type="button" class="btn btn-primary" style="margin-top:5px;">
+			        <span class="glyphicon glyphicon-cloud-upload"></span> Upload new one
+			      </button>
+			      <button id="btn-reset-avatar" type="button" class="btn btn-primary" style="margin-top:5px;">
+	            <span class="glyphicon glyphicon-trash"></span>
+	          </button>
+	          <button id="btn-submit-avatar" type="submit" class="btn btn-primary" style="margin-top:5px;">
+	             <span class="glyphicon glyphicon-check"></span>
+	           </button>
+           </form>
+         </div>
 		  </div>
-		</form>
+	  </div>
   </div>
 	
 </div>
@@ -231,6 +242,8 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<%- partial("../components/error-alert.ejs") %>
 
 <% block("localScripts", "<script src='/lib/bootstrap-select/bootstrap-select.min.js'></script>") %>
 <% block("localScripts", "<script src='/lib/bootstrap-typeahead/bootstrap-typeahead.js'></script>") %>

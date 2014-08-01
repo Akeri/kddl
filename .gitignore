@@ -43,3 +43,11 @@ nbproject
 # local config
 ########################
 config/local.js
+
+
+########################
+# project
+########################
+files/images/armors/*
+files/images/avatars/*
+files/tmp/*

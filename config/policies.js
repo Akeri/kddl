@@ -27,6 +27,8 @@ module.exports.policies = {
     "profileEdit"       : ["flash", "isAuthenticated", "self"],
     "profileUpdate"     : ["flash", "isAuthenticated", "self"],
     "passwordUpdate"    : ["flash", "isAuthenticated", "self"],
+    'uploadAvatar'      : ["flash", "isAuthenticated", "selfuser"],
+    'confirmAvatar'     : ["flash", "isAuthenticated", "selfuser"],
     "*"                 : ["flash", "isAuthenticated", "staff"]
   },
   

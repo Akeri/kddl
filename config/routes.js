@@ -56,6 +56,16 @@ module.exports.routes = {
     action      : 'passwordUpdate'
   },
   
+  '/user/:userId/uploadavatar' : {
+    controller  : 'UserController',
+    action      : 'uploadAvatar'
+  },
+  
+  '/user/:userId/confirmavatar' : {
+    controller  : 'UserController',
+    action      : 'confirmAvatar'
+  },
+  
   '/user/:userId/player/new' : {
     controller  : "PlayerController",
     action      : 'new'

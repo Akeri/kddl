@@ -19,6 +19,7 @@ module.exports.sockets = {
     // By default: do nothing
     // This is a good place to subscribe a new socket to a room, inform other users that
     // someone new has come online, or any other custom socket.io logic
+    
   },
 
   // This custom onDisconnect function will be run each time a socket disconnects
@@ -26,6 +27,7 @@ module.exports.sockets = {
 
     // By default: do nothing
     // This is a good place to broadcast a disconnect message, or any other custom socket.io logic
+    
   },
 
 

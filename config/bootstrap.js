@@ -23,7 +23,17 @@ module.exports.bootstrap = function (cb) {
     fs.symlink(
       path.join(process.cwd(), "/files/images/armors"),
       path.join(process.cwd(), "/.tmp/public/linker/images/armors"),
-      function(err){ if (err) console.log(err); }
+      function(err){ /*if (err) console.log(err);*/ }
+    );
+    fs.symlink(
+      path.join(process.cwd(), "/files/tmp"),
+      path.join(process.cwd(), "/.tmp/public/linker/tmp"),
+      function(err){ /*if (err) console.log(err);*/ }
+    );
+    fs.symlink(
+      path.join(process.cwd(), "/files/images/avatars"),
+      path.join(process.cwd(), "/.tmp/public/linker/images/avatars"),
+      function(err){ /*if (err) console.log(err);*/ }
     );
 
     cb();

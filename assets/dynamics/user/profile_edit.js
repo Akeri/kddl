@@ -69,4 +69,78 @@
     $("#player-delete-confirm #player-delete-confirm-name").text(playerName);
   });
   
+  // Init upload avatar button
+  $(function(){
+    
+    if (window.File && window.FileReader){ //These are the relevant HTML5 objects that we are going to use 
+      initUploadControls();
+    }else{
+      console.log("Old Browser");
+    }
+    
+    function initUploadControls(){
+      
+      var $avatar = $("#avatar");
+      var originalPath = $avatar.attr("src");
+      
+      function hideAvatarControls(){
+        $("#btn-reset-avatar").hide();
+        $("#btn-submit-avatar").hide();
+      }
+      
+      function showAvatarControls(){
+        $("#btn-reset-avatar").show();
+        $("#btn-submit-avatar").show();
+      }
+      
+      hideAvatarControls();
+      
+      function resetAvatar(){
+        $avatar.attr("src", originalPath);
+        $("[name='tmppath']").val("");
+        hideAvatarControls();
+      }
+    
+      $("#btn-user-avatar").attr("disabled", false).on("click", function(){
+        $("#user-avatar").trigger("click");
+      });
+      
+      $("#user-avatar").val("").on("change", function(e){
+        if (!e.target.files.length) return resetAvatar();
+        $("#btn-user-avatar").attr("disabled", true);
+        var userId = $(this).data("user_id");
+        var csrf = $(this).siblings("[name='_csrf']").val();
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e){
+          var params = {
+            _csrf  : csrf,
+            file   : {
+              name : file.name,
+              size : file.size,
+              type : file.type,
+              data : e.target.result
+            }
+          };
+          socket.post("/user/" + userId + "/uploadavatar", params, function(response){
+            $("#btn-user-avatar").attr("disabled", false);
+            if (response.code == 500){
+              var $alert = $("#error-alert");
+              $alert.find(".error-message").text(response.error);
+              $alert.modal("show");
+            }else{
+              $avatar.attr("src", response.data);
+              $("[name='tmppath']").val(response.path);
+              showAvatarControls();
+            }
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+      
+      $("#btn-reset-avatar").on("click", resetAvatar);
+    }
+    
+  });
+  
 })();

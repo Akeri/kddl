@@ -102,7 +102,7 @@ module.exports = {
           user.players = players;
           res.view("user/profile_edit.ejs", {
             user : user
-          });   
+          });
       });
     });
   },
@@ -230,6 +230,49 @@ module.exports = {
           });
         }
       });
+    });
+  },
+  
+  // upload temporal avatar
+  uploadAvatar : function(req, res, next){
+    var file = req.param("file");
+    var up = require("../services/uploader.js");
+    var path = require("path");
+    var ext = path.extname(file.name);
+    file.name = req.param("userId") + "-avatar" + ext;
+    up.uploadBase64(file, sails.config.kddl.tmpFolder, false, function success(file){
+      file.publicPath = "/linker/tmp/" + file.name;
+      res.json(file, 200);
+    }, function error(msg){
+      res.json({ code : 500, error : msg });
+    });
+  },
+  
+  // confirm temporal avatar
+  confirmAvatar : function(req, res, next){
+    var fs = require("fs");
+    var path = require("path");
+    var tmpPath = req.param("tmppath");
+    var ext = path.extname(tmpPath);
+    var fileName = path.basename(tmpPath, ext) + new Date().getTime() + ext;
+    var olds = require("glob").sync("files/images/avatars/*" + req.param("userId") + "*");
+    for (var i = 0; i < olds.length; i++) fs.unlink(olds[i]);
+    fs.renameSync(tmpPath, "files/images/avatars/" + fileName);
+    var avatarPath = "/linker/images/avatars/" + fileName;
+    var values = {
+      avatar : avatarPath
+    };
+    User.update(req.param("userId"), values, function userUpdated(err){
+      if (err){
+        req.session.flash = flash.from(err);
+        return res.redirect("back");
+      }
+      req.session.flash = {
+        success : [{ message : "Avatar updated successfully" }]
+      };
+      req.session.User.avatar = avatarPath;
+      res.header("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
+      res.redirect("back");
     });
   }
   
