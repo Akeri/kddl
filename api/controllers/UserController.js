@@ -270,7 +270,7 @@ module.exports = {
       req.session.flash = {
         success : [{ message : "Avatar updated successfully" }]
       };
-      req.session.User.avatar = avatarPath;
+      if (req.param("userId") == req.session.User.id) req.session.User.avatar = avatarPath;
       res.header("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
       res.redirect("back");
     });
