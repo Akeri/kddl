@@ -289,6 +289,7 @@ module.exports = {
         // find table
         var $ = cheerio.load(data);
         var $table = $("#mw-content-text > table").first();
+        if (!$table.length) $table = $("#mw-content-text table").first();
         if ($table.find("> tr").length == 1) $table = $table.next();
         // retrieve name
         var $name =  $table.find("> tr:nth-child(1) > td:first-child");

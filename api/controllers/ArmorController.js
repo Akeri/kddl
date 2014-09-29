@@ -112,7 +112,7 @@ module.exports = {
           // start loop for this rarity
           inspectArmors(0, armors,
             function(){
-              if (++i == rarities.length) return end(); // last rarity?
+              if (++i >= rarities.length) return end(); // last rarity?
               if (self.cancelCrawling) return crawlCancel();
               inspectRarities(i, rarities, end);
             }, armorStep);
@@ -130,7 +130,7 @@ module.exports = {
         status    : "scanning <strong>" + armor.name + "</strong>"
       });
       var next = function(){
-        if (++i == armors.length) return end(); // last armor?
+        if (++i >= armors.length) return end(); // last armor?
         if (self.cancelCrawling) return crawlCancel();
         inspectArmors(i, armors, end, step); // inspect next one
       };
@@ -149,6 +149,8 @@ module.exports = {
                   });
                 });
               }else{
+                if (armor.wikiaLink == '/wiki/Druidic_Platemail')
+                  console.log(i, armor);
                 crawler.downloadArmorPics(armor, function(armor){
                   Armor.update(dbArmor.id, armor, function armorUpdated(err, updatedArmors){
                     if (err) return console.log("Error updating " + armor.name + ":", err);
@@ -163,8 +165,7 @@ module.exports = {
               next();
             },
             function gotError(error){
-//              console.log(error);
-              next();
+              console.log("Error:", error);
             }
           );
         })

@@ -60,6 +60,7 @@ module.exports = {
    * @returns {[string]}
    */
   normalize : function(combo){
+    if (!combo) return [];
     return combo.sort();
   },
   /**

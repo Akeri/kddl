@@ -39,6 +39,9 @@ module.exports.policies = {
   },
   
   armor : {
+    "crawlStart" : "flash",
+    "crawler" : "flash",
+    "crawlStop" : "flash",
     "show"              : "isAuthenticated",
     "index"             : ["flash", "isAuthenticated"],
     "*"                 : ["flash", "isAuthenticated", "staff"]
